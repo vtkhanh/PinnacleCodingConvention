@@ -20,6 +20,11 @@ variables:
 name: 1.0.$(patch) # Set the value of $(Build.BuildNumber)
 
 steps:
+- task: NuGetCommand@2
+  inputs:
+    command: 'restore'
+    restoreSolution: '**/*.sln'
+
 - task: VSBuild@1
   inputs:
     solution: '**\*.sln'
