@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Threading;
+using EnvDTE;
+using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
+using PinnacleCodingConvention.Common;
 using Task = System.Threading.Tasks.Task;
 
 namespace PinnacleCodingConvention
@@ -24,14 +27,39 @@ namespace PinnacleCodingConvention
     /// </para>
     /// </remarks>
     [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
-    [Guid(PinnacleCodingConventionPackage.PackageGuidString)]
+    [Guid(PackageGuid.PinnacleCodingConventionPackageString)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
     public sealed class PinnacleCodingConventionPackage : AsyncPackage
     {
+
         /// <summary>
-        /// PinnacleCodingConventionPackage GUID string.
+        /// The top level application instance of the VS IDE that is executing this package.
         /// </summary>
-        public const string PackageGuidString = "2aef4ddf-562d-4264-9929-24f3be06c921";
+        private DTE2 _ide;
+
+        /// <summary>
+        /// Gets the top level application instance of the VS IDE that is executing this package.
+        /// </summary>
+        public DTE2 IDE => _ide ?? (_ide = (DTE2)GetService(typeof(DTE)));
+
+        /// <summary>
+        /// Gets the currently active document, otherwise null.
+        /// </summary>
+        public Document ActiveDocument
+        {
+            get
+            {
+                try
+                {
+                    return IDE.ActiveDocument;
+                }
+                catch (Exception)
+                {
+                    // If a project property page is active, accessing the ActiveDocument causes an exception.
+                    return null;
+                }
+            }
+        }
 
         #region Package Members
 

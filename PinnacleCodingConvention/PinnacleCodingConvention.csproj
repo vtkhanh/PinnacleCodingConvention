@@ -46,6 +46,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="CleanUpCommand.cs" />
+    <Compile Include="Common\PackageGuid.cs" />
+    <Compile Include="Helpers\OutputWindowHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PinnacleCodingConventionPackage.cs" />
   </ItemGroup>

@@ -5,6 +5,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using PinnacleCodingConvention.Common;
+using PinnacleCodingConvention.Helpers;
 using Task = System.Threading.Tasks.Task;
 
 namespace PinnacleCodingConvention
@@ -18,11 +20,6 @@ namespace PinnacleCodingConvention
         /// Command ID.
         /// </summary>
         public const int CommandId = 0x0100;
-
-        /// <summary>
-        /// Command menu group (command set GUID).
-        /// </summary>
-        public static readonly Guid CommandSet = new Guid("a35bce14-852c-484e-a8c0-88371dbc25ad");
 
         /// <summary>
         /// VS Package that provides this command, not null.
@@ -40,7 +37,7 @@ namespace PinnacleCodingConvention
             this.package = package ?? throw new ArgumentNullException(nameof(package));
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
 
-            var menuCommandID = new CommandID(CommandSet, CommandId);
+            var menuCommandID = new CommandID(PackageGuid.CleanUpCommandGuid, CommandId);
             var menuItem = new MenuCommand(this.Execute, menuCommandID);
             commandService.AddCommand(menuItem);
         }
@@ -89,6 +86,13 @@ namespace PinnacleCodingConvention
         private void Execute(object sender, EventArgs e)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
+            //ShowDemoDialog();
+
+            OutputWindowHelper.WriteLine("Execute command!");
+        }
+
+        private void ShowDemoDialog()
+        {
             string message = string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback()", this.GetType().FullName);
             string title = "CleanUpCommand";
 
