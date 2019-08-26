@@ -12,13 +12,23 @@ namespace PinnacleCodingConvention.Helpers
 
         private static IVsOutputWindowPane OutputWindowPane => _outputWindowPane ?? (_outputWindowPane = GetOutputPane());
 
-        public static void WriteLine(string message)
+        internal static void WriteError(string message)
+        {
+            WriteLine(Resource.Error.ToUpper(), message);
+        }
+
+        internal static void WriteWarning(string message)
+        {
+            WriteLine(Resource.Warning, message);
+        }
+
+        private static void WriteLine(string category, string message)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
             if (OutputWindowPane is object)
             {
-                string outputMessage = $"[{DateTime.Now.ToString("hh:mm:ss tt")}] {message}{Environment.NewLine}";
+                string outputMessage = $"[{DateTime.Now.ToString("hh:mm:ss tt")}] {category}: {message}{Environment.NewLine}";
                 OutputWindowPane.OutputString(outputMessage);
             }
         }

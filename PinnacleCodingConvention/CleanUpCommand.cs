@@ -1,12 +1,8 @@
-﻿using System;
-using System.ComponentModel.Design;
-using System.Globalization;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
+﻿using Microsoft.VisualStudio.Shell;
 using PinnacleCodingConvention.Common;
 using PinnacleCodingConvention.Helpers;
+using System;
+using System.ComponentModel.Design;
 using Task = System.Threading.Tasks.Task;
 
 namespace PinnacleCodingConvention
@@ -24,7 +20,7 @@ namespace PinnacleCodingConvention
         /// <summary>
         /// VS Package that provides this command, not null.
         /// </summary>
-        private readonly AsyncPackage package;
+        private readonly AsyncPackage _package;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CleanUpCommand"/> class.
@@ -34,11 +30,11 @@ namespace PinnacleCodingConvention
         /// <param name="commandService">Command service to add command to, not null.</param>
         private CleanUpCommand(AsyncPackage package, OleMenuCommandService commandService)
         {
-            this.package = package ?? throw new ArgumentNullException(nameof(package));
+            _package = package ?? throw new ArgumentNullException(nameof(package));
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
 
             var menuCommandID = new CommandID(PackageGuid.CleanUpCommandGuid, CommandId);
-            var menuItem = new MenuCommand(this.Execute, menuCommandID);
+            var menuItem = new MenuCommand(Execute, menuCommandID);
             commandService.AddCommand(menuItem);
         }
 
@@ -54,11 +50,11 @@ namespace PinnacleCodingConvention
         /// <summary>
         /// Gets the service provider from the owner package.
         /// </summary>
-        private Microsoft.VisualStudio.Shell.IAsyncServiceProvider ServiceProvider
+        private IAsyncServiceProvider ServiceProvider
         {
             get
             {
-                return this.package;
+                return _package;
             }
         }
 
@@ -86,24 +82,27 @@ namespace PinnacleCodingConvention
         private void Execute(object sender, EventArgs e)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            //ShowDemoDialog();
 
-            OutputWindowHelper.WriteLine("Execute command!");
+            new UndoTransactionHelper((PinnacleCodingConventionPackage) _package, "PCV Clean up").Run(() =>
+            {
+                OutputWindowHelper.WriteWarning("Execute command!");
+                OutputWindowHelper.WriteError("Execute command!");
+            });
         }
 
-        private void ShowDemoDialog()
-        {
-            string message = string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback()", this.GetType().FullName);
-            string title = "CleanUpCommand";
+        //private void ShowDemoDialog()
+        //{
+        //    string message = string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback()", this.GetType().FullName);
+        //    string title = "CleanUpCommand";
 
-            // Show a message box to prove we were here
-            VsShellUtilities.ShowMessageBox(
-                this.package,
-                message,
-                title,
-                OLEMSGICON.OLEMSGICON_INFO,
-                OLEMSGBUTTON.OLEMSGBUTTON_OK,
-                OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
-        }
+        //    // Show a message box to prove we were here
+        //    VsShellUtilities.ShowMessageBox(
+        //        this.package,
+        //        message,
+        //        title,
+        //        OLEMSGICON.OLEMSGICON_INFO,
+        //        OLEMSGBUTTON.OLEMSGBUTTON_OK,
+        //        OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+        //}
     }
 }
