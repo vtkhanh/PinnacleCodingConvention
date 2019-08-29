@@ -24,8 +24,6 @@ namespace PinnacleCodingConvention.Helpers
 
         private static void WriteLine(string category, string message)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             if (OutputWindowPane is object)
             {
                 string outputMessage = $"[{DateTime.Now.ToString("hh:mm:ss tt")}] {category}: {message}{Environment.NewLine}";
@@ -35,8 +33,6 @@ namespace PinnacleCodingConvention.Helpers
 
         private static IVsOutputWindowPane GetOutputPane()
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             if (!(Package.GetGlobalService(typeof(SVsOutputWindow)) is IVsOutputWindow outputWindow))
                 return null;
 

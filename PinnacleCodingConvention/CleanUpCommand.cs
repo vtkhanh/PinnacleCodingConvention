@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.Shell;
 using PinnacleCodingConvention.Common;
 using PinnacleCodingConvention.Helpers;
+using PinnacleCodingConvention.Services;
 using System;
 using System.ComponentModel.Design;
 using Task = System.Threading.Tasks.Task;
@@ -22,6 +23,10 @@ namespace PinnacleCodingConvention
         /// </summary>
         private readonly AsyncPackage _package;
 
+        private readonly CleanUpService _cleanUpService;
+
+        private PinnacleCodingConventionPackage PCCPackage { get; }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="CleanUpCommand"/> class.
         /// Adds our command handlers for menu (commands must exist in the command table file)
@@ -36,6 +41,9 @@ namespace PinnacleCodingConvention
             var menuCommandID = new CommandID(PackageGuid.CleanUpCommandGuid, CommandId);
             var menuItem = new MenuCommand(Execute, menuCommandID);
             commandService.AddCommand(menuItem);
+
+            PCCPackage = (PinnacleCodingConventionPackage)_package;
+            _cleanUpService = CleanUpService.GetInstance(PCCPackage);
         }
 
         /// <summary>
@@ -83,11 +91,7 @@ namespace PinnacleCodingConvention
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            new UndoTransactionHelper((PinnacleCodingConventionPackage) _package, "PCV Clean up").Run(() =>
-            {
-                OutputWindowHelper.WriteWarning("Execute command!");
-                OutputWindowHelper.WriteError("Execute command!");
-            });
+            _cleanUpService.Execute(PCCPackage.ActiveDocument);
         }
 
         //private void ShowDemoDialog()

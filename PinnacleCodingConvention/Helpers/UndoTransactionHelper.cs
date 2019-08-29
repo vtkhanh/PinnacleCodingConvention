@@ -28,8 +28,6 @@ namespace PinnacleCodingConvention.Helpers
         /// <param name="catchAction">The action to be performed wihin a catch block.</param>
         internal void Run(Action tryAction, Action<Exception> catchAction = null)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
             bool shouldCloseUndoContext = false;
 
             // Start an undo transaction (unless inside one already or within an auto save context).
