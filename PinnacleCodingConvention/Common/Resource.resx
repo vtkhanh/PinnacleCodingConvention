@@ -123,6 +123,9 @@
   <data name="Exception" xml:space="preserve">
     <value>Exception</value>
   </data>
+  <data name="Info" xml:space="preserve">
+    <value>Info</value>
+  </data>
   <data name="SeeOutputForMoreInformation" xml:space="preserve">
     <value>See output for more information</value>
   </data>

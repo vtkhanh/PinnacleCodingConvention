@@ -79,6 +79,15 @@ namespace PinnacleCodingConvention.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Info.
+        /// </summary>
+        internal static string Info {
+            get {
+                return ResourceManager.GetString("Info", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to See output for more information.
         /// </summary>
         internal static string SeeOutputForMoreInformation {

@@ -23,7 +23,7 @@ namespace PinnacleCodingConvention
         /// </summary>
         private readonly AsyncPackage _package;
 
-        private readonly CleanUpService _cleanUpService;
+        private readonly CleanUpManager _cleanUpService;
 
         private PinnacleCodingConventionPackage PCCPackage { get; }
 
@@ -43,7 +43,7 @@ namespace PinnacleCodingConvention
             commandService.AddCommand(menuItem);
 
             PCCPackage = (PinnacleCodingConventionPackage)_package;
-            _cleanUpService = CleanUpService.GetInstance(PCCPackage);
+            _cleanUpService = CleanUpManager.GetInstance(PCCPackage);
         }
 
         /// <summary>

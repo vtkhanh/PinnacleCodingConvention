@@ -73,14 +73,12 @@ namespace PinnacleCodingConvention.Helpers
         }
 
         /// <summary>
-        /// ets the declaration of the specified code class as a string.
+        /// Gets the declaration of the specified code class as a string.
         /// </summary>
         /// <param name="codeClass">The code class.</param>
         /// <returns>The string declaration.</returns>
         internal static string GetClassDeclaration(CodeClass codeClass)
         {
-            
-
             // Get the start point after the attributes.
             var startPoint = codeClass.GetStartPoint(vsCMPart.vsCMPartHeader);
 
@@ -88,14 +86,12 @@ namespace PinnacleCodingConvention.Helpers
         }
 
         /// <summary>
-        /// ets the declaration of the specified code delegate as a string.
+        /// Gets the declaration of the specified code delegate as a string.
         /// </summary>
         /// <param name="codeDelegate">The code delegate.</param>
         /// <returns>The string declaration.</returns>
         internal static string GetDelegateDeclaration(CodeDelegate codeDelegate)
         {
-            
-
             // Get the start point at the end of the attributes if there are any (vsCMPartHeader is
             // not available for delegates).
             var startPoint = codeDelegate.Attributes.Count > 0
@@ -106,14 +102,12 @@ namespace PinnacleCodingConvention.Helpers
         }
 
         /// <summary>
-        /// ets the declaration of the specified code enum as a string.
+        /// Gets the declaration of the specified code enum as a string.
         /// </summary>
         /// <param name="codeEnum">The code enum.</param>
         /// <returns>The string declaration.</returns>
         internal static string GetEnumerationDeclaration(CodeEnum codeEnum)
         {
-            
-
             // Get the start point after the attributes.
             var startPoint = codeEnum.GetStartPoint(vsCMPart.vsCMPartHeader);
 
@@ -121,14 +115,12 @@ namespace PinnacleCodingConvention.Helpers
         }
 
         /// <summary>
-        /// ets the declaration of the specified code event as a string.
+        /// Gets the declaration of the specified code event as a string.
         /// </summary>
         /// <param name="codeEvent">The code event.</param>
         /// <returns>The string declaration.</returns>
         internal static string GetEventDeclaration(CodeEvent codeEvent)
         {
-            
-
             // Get the start point at the end of the attributes if there are any (vsCMPartHeader is
             // not available for events).
             var startPoint = codeEvent.Attributes.Count > 0
@@ -139,14 +131,12 @@ namespace PinnacleCodingConvention.Helpers
         }
 
         /// <summary>
-        /// ets the declaration of the specified code field as a string.
+        /// Gets the declaration of the specified code field as a string.
         /// </summary>
         /// <param name="codeField">The code field.</param>
         /// <returns>The string declaration.</returns>
         internal static string GetFieldDeclaration(CodeVariable codeField)
         {
-            
-
             // Get the start point at the end of the attributes if there are any (vsCMPartHeader is
             // not available for fields).
             var startPoint = codeField.Attributes.Count > 0
@@ -157,14 +147,12 @@ namespace PinnacleCodingConvention.Helpers
         }
 
         /// <summary>
-        /// ets the declaration of the specified code interface as a string.
+        /// Gets the declaration of the specified code interface as a string.
         /// </summary>
         /// <param name="codeInterface">The code interface.</param>
         /// <returns>The string declaration.</returns>
         internal static string GetInterfaceDeclaration(CodeInterface codeInterface)
         {
-            
-
             // Get the start point after the attributes.
             var startPoint = codeInterface.GetStartPoint(vsCMPart.vsCMPartHeader);
 
@@ -172,14 +160,12 @@ namespace PinnacleCodingConvention.Helpers
         }
 
         /// <summary>
-        /// ets the declaration of the specified code method as a string.
+        /// Gets the declaration of the specified code method as a string.
         /// </summary>
         /// <param name="codeFunction">The code method.</param>
         /// <returns>The string declaration.</returns>
         internal static string GetMethodDeclaration(CodeFunction codeFunction)
         {
-            
-
             // Get the start point after the attributes.
             var startPoint = codeFunction.GetStartPoint(vsCMPart.vsCMPartHeader);
 
@@ -187,14 +173,12 @@ namespace PinnacleCodingConvention.Helpers
         }
 
         /// <summary>
-        /// ets the declaration of the specified code property as a string.
+        /// Gets the declaration of the specified code property as a string.
         /// </summary>
         /// <param name="codeProperty">The code property.</param>
         /// <returns>The string declaration.</returns>
         internal static string GetPropertyDeclaration(CodeProperty codeProperty)
         {
-            
-
             // Get the start point at the end of the attributes if there are any (vsCMPartHeader is
             // not available for properties).
             var startPoint = codeProperty.Attributes.Count > 0
@@ -205,14 +189,12 @@ namespace PinnacleCodingConvention.Helpers
         }
 
         /// <summary>
-        /// ets the declaration of the specified code struct as a string.
+        /// Gets the declaration of the specified code struct as a string.
         /// </summary>
         /// <param name="codeStruct">The code struct.</param>
         /// <returns>The string declaration.</returns>
         internal static string GetStructDeclaration(CodeStruct codeStruct)
         {
-            
-
             // Get the start point after the attributes.
             var startPoint = codeStruct.GetStartPoint(vsCMPart.vsCMPartHeader);
 

@@ -22,6 +22,11 @@ namespace PinnacleCodingConvention.Helpers
             WriteLine(Resource.Warning, message);
         }
 
+        internal static void WriteInfo(string message)
+        {
+            WriteLine(Resource.Info, message);
+        }
+
         private static void WriteLine(string category, string message)
         {
             if (OutputWindowPane is object)
