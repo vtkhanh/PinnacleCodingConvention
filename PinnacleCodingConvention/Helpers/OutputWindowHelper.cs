@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using PinnacleCodingConvention.Common;
+using PinnacleCodingConvention.Models.CodeItems;
 
 namespace PinnacleCodingConvention.Helpers
 {
@@ -25,6 +27,19 @@ namespace PinnacleCodingConvention.Helpers
         internal static void WriteInfo(string message)
         {
             WriteLine(Resource.Info, message);
+        }
+
+        internal static void PrintCodeItems(IEnumerable<BaseCodeItem> codeItems)
+        {
+            foreach (var codeItem in codeItems)
+            {
+                WriteInfo($"{codeItem.Kind} {codeItem.Name} start: {codeItem.StartLine} end: {codeItem.EndLine}");
+
+                if (codeItem is ICodeItemParent parent)
+                {
+                    PrintCodeItems(parent.Children);
+                }
+            }
         }
 
         private static void WriteLine(string category, string message)

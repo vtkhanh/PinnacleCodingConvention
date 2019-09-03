@@ -49,6 +49,7 @@
     <Compile Include="Common\PackageGuid.cs" />
     <Compile Include="Helpers\CodeCommentHelper.cs" />
     <Compile Include="Helpers\CodeElementHelper.cs" />
+    <Compile Include="Helpers\CodeItemNameComparer.cs" />
     <Compile Include="Helpers\CodeLanguage.cs" />
     <Compile Include="Helpers\CodeLanguageHelper.cs" />
     <Compile Include="Helpers\DocumentExtension.cs" />
@@ -86,6 +87,7 @@
     <Compile Include="Models\CodeItems\IInterfaceItem.cs" />
     <Compile Include="Models\CodeItems\KindCodeItem.cs" />
     <Compile Include="Models\CodeModel.cs" />
+    <Compile Include="Models\CodeSortOrder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PinnacleCodingConventionPackage.cs" />
     <Compile Include="Common\Resource.Designer.cs">
@@ -94,10 +96,12 @@
       <DependentUpon>Resource.resx</DependentUpon>
     </Compile>
     <Compile Include="Services\CleanUpManager.cs" />
+    <Compile Include="Services\CodeItemOrder.cs" />
     <Compile Include="Services\CodeItemRetriever.cs" />
     <Compile Include="Services\CodeModelBuilder.cs" />
     <Compile Include="Services\CodeModelCache.cs" />
     <Compile Include="Services\CodeModelService.cs" />
+    <Compile Include="Services\CodeTreeBuilder.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

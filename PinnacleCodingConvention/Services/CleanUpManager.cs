@@ -1,13 +1,19 @@
-﻿using EnvDTE;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using EnvDTE;
 using Microsoft.VisualStudio.Shell;
 using PinnacleCodingConvention.Helpers;
+using PinnacleCodingConvention.Models;
+using PinnacleCodingConvention.Models.CodeItems;
 
 namespace PinnacleCodingConvention.Services
 {
     internal sealed class CleanUpManager
     {
         private static CleanUpManager _instance;
-        private CodeItemRetriever _codeItemRetrievalService;
+        private CodeItemRetriever _codeItemRetriever;
+        private CodeItemOrder _codeItemOrder;
 
         private readonly PinnacleCodingConventionPackage _package;
 
@@ -15,7 +21,8 @@ namespace PinnacleCodingConvention.Services
         {
             _package = package;
 
-            _codeItemRetrievalService = CodeItemRetriever.GetInstance(package);
+            _codeItemRetriever = CodeItemRetriever.GetInstance(package);
+            _codeItemOrder = CodeItemOrder.GetInstance();
         }
 
         internal static CleanUpManager GetInstance(PinnacleCodingConventionPackage package) => _instance ?? (_instance = new CleanUpManager(package));
@@ -26,8 +33,12 @@ namespace PinnacleCodingConvention.Services
 
             new UndoTransactionHelper(_package, document.Name).Run(() =>
             {
-                var codeItems = _codeItemRetrievalService.Retrieve(document);
+                var codeItems = _codeItemRetriever.Retrieve(document).Where(item => !(item is CodeItemUsingStatement));
+                codeItems = _codeItemOrder.Order(codeItems, CodeSortOrder.Alpha);
+
+                OutputWindowHelper.PrintCodeItems(codeItems);
             });
         }
+
     }
 }
