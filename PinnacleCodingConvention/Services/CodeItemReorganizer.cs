@@ -21,9 +21,7 @@ namespace PinnacleCodingConvention.Services
         internal IEnumerable<BaseCodeItem> Reorganize(IEnumerable<BaseCodeItem> codeItems)
         {
             if (!codeItems.Any())
-            {
                 return codeItems;
-            }
             
             // Get the items in their current order and their desired order.
             var currentOrder = GetReorganizableCodeItemElements(codeItems);
@@ -36,9 +34,7 @@ namespace PinnacleCodingConvention.Services
                 var item = desiredOrder[desiredIndex];
 
                 if (item is ICodeItemParent itemAsParent && ShouldReorganizeChildren(item))
-                {
                     Reorganize(itemAsParent.Children);
-                }
 
                 int currentIndex = currentOrder.IndexOf(item);
                 if (desiredIndex != currentIndex)
@@ -62,7 +58,6 @@ namespace PinnacleCodingConvention.Services
             return codeItems;
         }
 
-
         /// <summary>
         /// Repositions the specified item above the specified base.
         /// </summary>
@@ -70,29 +65,12 @@ namespace PinnacleCodingConvention.Services
         /// <param name="baseItem">The base item.</param>
         private void RepositionItemAboveBase(BaseCodeItem itemToMove, BaseCodeItem baseItem)
         {
-            if (itemToMove == baseItem) return;
+            if (itemToMove == baseItem)
+                return;
 
             bool separateWithNewLine = ShouldBeSeparatedByNewLine(itemToMove, baseItem);
-            var text = GetTextAndRemoveItem(itemToMove, out int cursorOffset);
-
-            baseItem.RefreshCachedPositionAndName();
-            var baseStartPoint = baseItem.StartPoint;
-            var pastePoint = baseStartPoint.CreateEditPoint();
-
-            pastePoint.Insert(text);
-            pastePoint.Insert(Environment.NewLine);
-            if (separateWithNewLine)
-            {
-                pastePoint.Insert(Environment.NewLine);
-            }
-
-            pastePoint.EndOfLine();
-            baseStartPoint.SmartFormat(pastePoint);
-
-            if (cursorOffset >= 0)
-            {
-                baseStartPoint.Parent.Selection.MoveToAbsoluteOffset(baseStartPoint.AbsoluteCharOffset + cursorOffset);
-            }
+            CutItemToMove(itemToMove, out int cursorOffset);
+            PasteAboveBaseItem(baseItem, separateWithNewLine, cursorOffset);
 
             itemToMove.RefreshCachedPositionAndName();
             baseItem.RefreshCachedPositionAndName();
@@ -111,13 +89,13 @@ namespace PinnacleCodingConvention.Services
         }
 
         /// <summary>
-        /// Gets the text and removes the specified item.
+        /// Cut the text and removes the specified item.
         /// </summary>
         /// <param name="itemToRemove">The item to remove.</param>
         /// <param name="cursorOffset">
         /// The cursor's offset within the item being removed, otherwise -1.
         /// </param>
-        private static string GetTextAndRemoveItem(BaseCodeItem itemToRemove, out int cursorOffset)
+        private static void CutItemToMove(BaseCodeItem itemToRemove, out int cursorOffset)
         {
             // Refresh the code item and capture its end points.
             itemToRemove.RefreshCachedPositionAndName();
@@ -127,22 +105,37 @@ namespace PinnacleCodingConvention.Services
             // Determine the cursor's offset if within the item being removed.
             var cursorAbsoluteOffset = removeStartPoint.Parent.Selection.ActivePoint.AbsoluteCharOffset;
             if (cursorAbsoluteOffset >= removeStartPoint.AbsoluteCharOffset && cursorAbsoluteOffset <= removeEndPoint.AbsoluteCharOffset)
-            {
                 cursorOffset = cursorAbsoluteOffset - removeStartPoint.AbsoluteCharOffset;
-            }
             else
-            {
                 cursorOffset = -1;
-            }
 
-            // Capture the text.
-            var text = removeStartPoint.GetText(removeEndPoint);
-
-            // Remove the text and cleanup whitespace.
-            removeStartPoint.Delete(removeEndPoint);
+            // Capture the text and cleanup whitespace.
+            removeStartPoint.Cut(removeEndPoint);
             removeStartPoint.DeleteWhitespace(vsWhitespaceOptions.vsWhitespaceOptionsVertical);
+        }
 
-            return text;
+        /// <summary>
+        /// Paste the content in the clipboard above the position of base item
+        /// </summary>
+        /// <param name="baseItem"></param>
+        /// <param name="separateWithNewLine"></param>
+        /// <param name="cursorOffset"></param>
+        private static void PasteAboveBaseItem(BaseCodeItem baseItem, bool separateWithNewLine, int cursorOffset)
+        {
+            baseItem.RefreshCachedPositionAndName();
+            var baseStartPoint = baseItem.StartPoint;
+            var pastePoint = baseStartPoint.CreateEditPoint();
+
+            pastePoint.Paste();
+            pastePoint.Insert(Environment.NewLine);
+            if (separateWithNewLine)
+                pastePoint.Insert(Environment.NewLine);
+
+            pastePoint.EndOfLine();
+            baseStartPoint.SmartFormat(pastePoint);
+
+            if (cursorOffset >= 0)
+                baseStartPoint.Parent.Selection.MoveToAbsoluteOffset(baseStartPoint.AbsoluteCharOffset + cursorOffset);
         }
 
         /// <summary>
