@@ -1,4 +1,6 @@
-﻿namespace PinnacleCodingConvention.Helpers
+﻿using PinnacleCodingConvention.Common;
+
+namespace PinnacleCodingConvention.Helpers
 {
     /// <summary>
     /// A helper class for mapping <see cref="CodeLanguage"/> from a string.

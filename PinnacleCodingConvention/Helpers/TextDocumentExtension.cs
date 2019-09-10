@@ -1,5 +1,5 @@
 ﻿using EnvDTE;
-using Microsoft.VisualStudio.Shell;
+using PinnacleCodingConvention.Common;
 
 namespace PinnacleCodingConvention.Helpers
 {

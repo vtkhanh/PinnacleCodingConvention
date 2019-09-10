@@ -17,7 +17,7 @@ namespace PinnacleCodingConvention.Services
             _codeTreeBuilder = CodeTreeBuilder.GetInstance();
         }
 
-        public static CodeItemOrder GetInstance() => _instance ?? (_instance = new CodeItemOrder());
+        internal static CodeItemOrder GetInstance() => _instance ?? (_instance = new CodeItemOrder());
 
         internal IEnumerable<BaseCodeItem> Order(IEnumerable<BaseCodeItem> codeItems, CodeSortOrder sortOrder)
         {
@@ -59,7 +59,7 @@ namespace PinnacleCodingConvention.Services
 
             foreach (var codeItem in codeItems.OfType<ICodeItemParent>())
             {
-                Sort(codeItem.Children, comparer);
+                Sort(codeItem.Children.ToList(), comparer);
             }
         }
 

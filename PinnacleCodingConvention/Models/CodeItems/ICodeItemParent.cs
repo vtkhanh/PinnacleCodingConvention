@@ -17,7 +17,7 @@ namespace PinnacleCodingConvention.Models.CodeItems
         /// <summary>
         /// Gets the children of this code item, may be empty.
         /// </summary>
-        List<BaseCodeItem> Children { get; }
+        IList<BaseCodeItem> Children { get; set;  }
 
         /// <summary>
         /// Gets the insert point, may be null.

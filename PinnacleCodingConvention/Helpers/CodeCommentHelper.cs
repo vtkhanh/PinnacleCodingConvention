@@ -1,4 +1,5 @@
 ﻿using EnvDTE;
+using PinnacleCodingConvention.Common;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;

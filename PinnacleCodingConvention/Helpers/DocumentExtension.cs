@@ -1,4 +1,5 @@
 ﻿using EnvDTE;
+using PinnacleCodingConvention.Common;
 using Document = EnvDTE.Document;
 
 namespace PinnacleCodingConvention.Helpers

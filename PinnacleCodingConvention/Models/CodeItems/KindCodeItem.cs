@@ -8,6 +8,9 @@ namespace PinnacleCodingConvention.Models.CodeItems
     /// </summary>
     internal enum KindCodeItem
     {
+        [Description("Constants")]
+        Constants,
+
         [Description("Fields")]
         Field,
 

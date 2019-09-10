@@ -14,6 +14,7 @@ namespace PinnacleCodingConvention.Services
         private static CleanUpManager _instance;
         private CodeItemRetriever _codeItemRetriever;
         private CodeItemOrder _codeItemOrder;
+        private CodeItemReorganizer _codeItemReorganizer;
 
         private readonly PinnacleCodingConventionPackage _package;
 
@@ -23,6 +24,7 @@ namespace PinnacleCodingConvention.Services
 
             _codeItemRetriever = CodeItemRetriever.GetInstance(package);
             _codeItemOrder = CodeItemOrder.GetInstance();
+            _codeItemReorganizer = CodeItemReorganizer.GetInstance(package);
         }
 
         internal static CleanUpManager GetInstance(PinnacleCodingConventionPackage package) => _instance ?? (_instance = new CleanUpManager(package));
@@ -35,7 +37,7 @@ namespace PinnacleCodingConvention.Services
             {
                 var codeItems = _codeItemRetriever.Retrieve(document).Where(item => !(item is CodeItemUsingStatement));
                 codeItems = _codeItemOrder.Order(codeItems, CodeSortOrder.Alpha);
-
+                codeItems = _codeItemReorganizer.Reorganize(codeItems);
                 OutputWindowHelper.PrintCodeItems(codeItems);
             });
         }

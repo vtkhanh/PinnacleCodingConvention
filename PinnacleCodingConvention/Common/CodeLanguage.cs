@@ -1,4 +1,4 @@
-﻿namespace PinnacleCodingConvention.Helpers
+﻿namespace PinnacleCodingConvention.Common
 {
     /// <summary>
     /// An internal helper enumeration of code languages.

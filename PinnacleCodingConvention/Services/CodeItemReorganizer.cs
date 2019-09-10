@@ -1,0 +1,195 @@
+﻿using EnvDTE;
+using PinnacleCodingConvention.Helpers;
+using PinnacleCodingConvention.Models.CodeItems;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace PinnacleCodingConvention.Services
+{
+    internal class CodeItemReorganizer
+    {
+        private static CodeItemReorganizer _instance;
+
+        private readonly BlankLineInsertService _blankLineInsertService;
+
+        private CodeItemReorganizer(PinnacleCodingConventionPackage package) => _blankLineInsertService = BlankLineInsertService.GetInstance(package);
+
+        internal static CodeItemReorganizer GetInstance(PinnacleCodingConventionPackage package) => 
+            _instance ?? (_instance = new CodeItemReorganizer(package));
+
+        internal IEnumerable<BaseCodeItem> Reorganize(IEnumerable<BaseCodeItem> codeItems)
+        {
+            if (!codeItems.Any())
+            {
+                return codeItems;
+            }
+            
+            // Get the items in their current order and their desired order.
+            var currentOrder = GetReorganizableCodeItemElements(codeItems);
+            var desiredOrder = new List<BaseCodeItemElement>(currentOrder);
+            desiredOrder.Sort(new CodeItemTypeComparer());
+
+            // Iterate across the items in the desired order, moving them when necessary.
+            for (int desiredIndex = 0; desiredIndex < desiredOrder.Count; desiredIndex++)
+            {
+                var item = desiredOrder[desiredIndex];
+
+                if (item is ICodeItemParent itemAsParent && ShouldReorganizeChildren(item))
+                {
+                    Reorganize(itemAsParent.Children);
+                }
+
+                int currentIndex = currentOrder.IndexOf(item);
+                if (desiredIndex != currentIndex)
+                {
+                    // Move the item above what is in its desired position.
+                    RepositionItemAboveBase(item, currentOrder[desiredIndex]);
+
+                    // Update the current order to match the move.
+                    currentOrder.RemoveAt(currentIndex);
+                    currentOrder.Insert(desiredIndex > currentIndex ? desiredIndex - 1 : desiredIndex, item);
+                }
+            }
+
+            // Recursively reorganize the contents of any regions as well.
+            var codeItemRegions = codeItems.OfType<CodeItemRegion>();
+            foreach (var codeItemRegion in codeItemRegions)
+            {
+                Reorganize(codeItemRegion.Children);
+            }
+
+            return codeItems;
+        }
+
+
+        /// <summary>
+        /// Repositions the specified item above the specified base.
+        /// </summary>
+        /// <param name="itemToMove">The item to move.</param>
+        /// <param name="baseItem">The base item.</param>
+        private void RepositionItemAboveBase(BaseCodeItem itemToMove, BaseCodeItem baseItem)
+        {
+            if (itemToMove == baseItem) return;
+
+            bool separateWithNewLine = ShouldBeSeparatedByNewLine(itemToMove, baseItem);
+            var text = GetTextAndRemoveItem(itemToMove, out int cursorOffset);
+
+            baseItem.RefreshCachedPositionAndName();
+            var baseStartPoint = baseItem.StartPoint;
+            var pastePoint = baseStartPoint.CreateEditPoint();
+
+            pastePoint.Insert(text);
+            pastePoint.Insert(Environment.NewLine);
+            if (separateWithNewLine)
+            {
+                pastePoint.Insert(Environment.NewLine);
+            }
+
+            pastePoint.EndOfLine();
+            baseStartPoint.SmartFormat(pastePoint);
+
+            if (cursorOffset >= 0)
+            {
+                baseStartPoint.Parent.Selection.MoveToAbsoluteOffset(baseStartPoint.AbsoluteCharOffset + cursorOffset);
+            }
+
+            itemToMove.RefreshCachedPositionAndName();
+            baseItem.RefreshCachedPositionAndName();
+        }
+
+        /// <summary>
+        /// Determines if the two specified items should be separated by a newline.
+        /// </summary>
+        /// <param name="firstItem">The first item.</param>
+        /// <param name="secondItem">The second item.</param>
+        /// <returns>True if the items should be separated by a newline, otherwise false.</returns>
+        private bool ShouldBeSeparatedByNewLine(BaseCodeItem firstItem, BaseCodeItem secondItem)
+        {
+            return _blankLineInsertService.ShouldBeFollowedByBlankLine(firstItem) ||
+                   _blankLineInsertService.ShouldBePrecededByBlankLine(secondItem);
+        }
+
+        /// <summary>
+        /// Gets the text and removes the specified item.
+        /// </summary>
+        /// <param name="itemToRemove">The item to remove.</param>
+        /// <param name="cursorOffset">
+        /// The cursor's offset within the item being removed, otherwise -1.
+        /// </param>
+        private static string GetTextAndRemoveItem(BaseCodeItem itemToRemove, out int cursorOffset)
+        {
+            // Refresh the code item and capture its end points.
+            itemToRemove.RefreshCachedPositionAndName();
+            var removeStartPoint = itemToRemove.StartPoint;
+            var removeEndPoint = itemToRemove.EndPoint;
+
+            // Determine the cursor's offset if within the item being removed.
+            var cursorAbsoluteOffset = removeStartPoint.Parent.Selection.ActivePoint.AbsoluteCharOffset;
+            if (cursorAbsoluteOffset >= removeStartPoint.AbsoluteCharOffset && cursorAbsoluteOffset <= removeEndPoint.AbsoluteCharOffset)
+            {
+                cursorOffset = cursorAbsoluteOffset - removeStartPoint.AbsoluteCharOffset;
+            }
+            else
+            {
+                cursorOffset = -1;
+            }
+
+            // Capture the text.
+            var text = removeStartPoint.GetText(removeEndPoint);
+
+            // Remove the text and cleanup whitespace.
+            removeStartPoint.Delete(removeEndPoint);
+            removeStartPoint.DeleteWhitespace(vsWhitespaceOptions.vsWhitespaceOptionsVertical);
+
+            return text;
+        }
+
+        /// <summary>
+        /// Gets the set of reorganizable code item elements from the specified set of code items.
+        /// </summary>
+        /// <param name="codeItems">The code items.</param>
+        /// <returns>The set of reorganizable code item elements.</returns>
+        private static IList<BaseCodeItemElement> GetReorganizableCodeItemElements(IEnumerable<BaseCodeItem> codeItems)
+        {
+            // Get all code item elements.
+            var codeItemElements = codeItems.OfType<BaseCodeItemElement>().ToList();
+
+            // Refresh them to make sure all positions are updated.
+            codeItemElements.ForEach(x => x.RefreshCachedPositionAndName());
+
+            // Sort the items, pulling out the first item in a set if there are items sharing a definition (ex: fields).
+            codeItemElements = codeItemElements.GroupBy(item => item.StartOffset).Select(y => y.First()).OrderBy(z => z.StartOffset).ToList();
+
+            return codeItemElements;
+        }
+
+        /// <summary>
+        /// Determines if the specified item's children should be reorganized.
+        /// </summary>
+        /// <param name="parent">The parent item.</param>
+        /// <returns>True if the parent's children should be reorganized, otherwise false.</returns>
+        private bool ShouldReorganizeChildren(BaseCodeItemElement parent)
+        {
+            // Enumeration values should never be reordered.
+            if (parent is CodeItemEnum)
+                return false;
+
+            var parentAttributes = parent.Attributes;
+            if (parentAttributes is object)
+            {
+                // Some attributes indicate that order is critical and should not be reordered.
+                var attributesToIgnore = new[]
+                {
+                    "System.Runtime.InteropServices.ComImportAttribute",
+                    "System.Runtime.InteropServices.StructLayoutAttribute"
+                };
+
+                if (parentAttributes.OfType<CodeAttribute>().Any(x => attributesToIgnore.Contains(x.FullName)))
+                    return false;
+            }
+
+            return true;
+        }
+    }
+}
