@@ -27,7 +27,7 @@ namespace PinnacleCodingConvention
     /// </para>
     /// </remarks>
     [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
-    [Guid(PackageGuid.PinnacleCodingConventionPackageString)]
+    [Guid(PackageGuids.PinnacleCodingConventionPackageString)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
     public sealed class PinnacleCodingConventionPackage : AsyncPackage
     {

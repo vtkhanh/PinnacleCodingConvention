@@ -15,8 +15,7 @@ namespace PinnacleCodingConvention.Services
 
         private CodeItemReorganizer(PinnacleCodingConventionPackage package) => _blankLineInsertService = BlankLineInsertService.GetInstance(package);
 
-        internal static CodeItemReorganizer GetInstance(PinnacleCodingConventionPackage package) => 
-            _instance ?? (_instance = new CodeItemReorganizer(package));
+        internal static CodeItemReorganizer GetInstance(PinnacleCodingConventionPackage package) => _instance ?? (_instance = new CodeItemReorganizer(package));
 
         internal IEnumerable<BaseCodeItem> Reorganize(IEnumerable<BaseCodeItem> codeItems)
         {

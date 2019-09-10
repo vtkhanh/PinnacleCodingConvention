@@ -46,7 +46,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="CleanUpCommand.cs" />
-    <Compile Include="Common\PackageGuid.cs" />
     <Compile Include="Helpers\CodeCommentHelper.cs" />
     <Compile Include="Helpers\CodeElementHelper.cs" />
     <Compile Include="Helpers\CodeItemNameComparer.cs" />
@@ -89,6 +88,11 @@
     <Compile Include="Models\CodeItems\KindCodeItem.cs" />
     <Compile Include="Models\CodeModel.cs" />
     <Compile Include="Models\CodeSortOrder.cs" />
+    <Compile Include="PinnacleCodingConvention.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PinnacleCodingConvention.vsct</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PinnacleCodingConventionPackage.cs" />
     <Compile Include="Common\Resource.Designer.cs">
@@ -126,12 +130,25 @@
     <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="16.3.1061" />
   </ItemGroup>
   <ItemGroup>
-    <VSCTCompile Include="PinnacleCodingConventionPackage.vsct">
+    <VSCTCompile Include="PinnacleCodingConvention.vsct">
       <ResourceName>Menus.ctmenu</ResourceName>
+      <Generator>VsctGenerator</Generator>
+      <LastGenOutput>PinnacleCodingConvention.cs</LastGenOutput>
     </VSCTCompile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\CleanUpCommand.png" />
+    <Content Include="Resources\Icon-48x48.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Resources\Icon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Resources\Preview.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Common\Resource.resx">

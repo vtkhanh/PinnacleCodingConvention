@@ -16,7 +16,7 @@ namespace PinnacleCodingConvention
         /// <summary>
         /// Command ID.
         /// </summary>
-        public const int CommandId = 0x0100;
+        public const int CommandId = PackageIds.CleanUpCommandId;
 
         /// <summary>
         /// VS Package that provides this command, not null.
@@ -38,7 +38,7 @@ namespace PinnacleCodingConvention
             _package = package ?? throw new ArgumentNullException(nameof(package));
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
 
-            var menuCommandID = new CommandID(PackageGuid.CleanUpCommandGuid, CommandId);
+            var menuCommandID = new CommandID(PackageGuids.PinnacleCodingConventionPackageCmdSet, CommandId);
             var menuItem = new MenuCommand(Execute, menuCommandID);
             commandService.AddCommand(menuItem);
 
@@ -49,11 +49,7 @@ namespace PinnacleCodingConvention
         /// <summary>
         /// Gets the instance of the command.
         /// </summary>
-        public static CleanUpCommand Instance
-        {
-            get;
-            private set;
-        }
+        public static CleanUpCommand Instance { get; private set; }
 
         /// <summary>
         /// Gets the service provider from the owner package.
@@ -94,19 +90,5 @@ namespace PinnacleCodingConvention
             _cleanUpService.Execute(PCCPackage.ActiveDocument);
         }
 
-        //private void ShowDemoDialog()
-        //{
-        //    string message = string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback()", this.GetType().FullName);
-        //    string title = "CleanUpCommand";
-
-        //    // Show a message box to prove we were here
-        //    VsShellUtilities.ShowMessageBox(
-        //        this.package,
-        //        message,
-        //        title,
-        //        OLEMSGICON.OLEMSGICON_INFO,
-        //        OLEMSGBUTTON.OLEMSGBUTTON_OK,
-        //        OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
-        //}
     }
 }

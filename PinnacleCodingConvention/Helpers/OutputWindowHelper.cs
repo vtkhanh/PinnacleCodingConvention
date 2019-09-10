@@ -56,7 +56,7 @@ namespace PinnacleCodingConvention.Helpers
             if (!(Package.GetGlobalService(typeof(SVsOutputWindow)) is IVsOutputWindow outputWindow))
                 return null;
 
-            Guid outputPaneGuid = PackageGuid.PinnacleCodingConventionOutputPaneGuid;
+            Guid outputPaneGuid = PackageGuids.PinnacleCodingConventionOutputPane;
 
             outputWindow.CreatePane(ref outputPaneGuid, OUTPUT_PANE_TITLE, fInitVisible: 1, fClearWithSolution: 1);
             outputWindow.GetPane(ref outputPaneGuid, out IVsOutputWindowPane windowPane);
