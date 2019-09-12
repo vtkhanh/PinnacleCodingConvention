@@ -28,11 +28,13 @@ steps:
     pwsh: true
 
 - task: NuGetCommand@2
+  displayName: NuGet restore
   inputs:
     command: 'restore'
     restoreSolution: '**/*.sln'
 
 - task: VSBuild@1
+  displayName: Build solution
   inputs:
     solution: '**\*.sln'
     maximumCpuCount: true
@@ -40,17 +42,19 @@ steps:
     configuration: '$(buildConfiguration)'
 
 - task: VSTest@2
+  displayName: Run tests
   inputs:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
 # Publish all needed files for the Release pipeline
 - task: CopyFiles@2
+  displayName: Copy Artifacts to staging
   inputs:
     SourceFolder: '$(Build.SourcesDirectory)'
     Contents: |
       README.md
-      build/**
+      Build/**
       **/*.vsix
     TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
