@@ -22,7 +22,7 @@
 
   <!--The Commands section is where commands, menus, and menu groups are defined.
       This section uses a Guid to identify the package that provides the command defined inside it. -->
-  <Commands package="guidPinnacleCodingConventionPackage">
+  <Commands package="PinnacleCodingConventionPackage">
     <!-- Inside this section we have different sub-sections: one for the menus, another
     for the menu groups, one for the buttons (the actual commands), one for the combos
     and the last one for the bitmaps used. Each element is identified by a command id that
@@ -36,7 +36,7 @@
          group as the part of a menu contained between two lines. The parent of a group
          must be a menu. -->
     <Groups>
-      <Group guid="guidPinnacleCodingConventionPackageCmdSet" id="EditorContextMenuGroup" priority="0x0600">
+      <Group guid="PinnacleCodingConventionPackageCmdSet" id="EditorContextMenuGroup" priority="0x0600">
         <!--<Parent guid="guidSHLMainMenu" id="IDM_VS_MENU_TOOLS"/>-->
         <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_CODEWIN" />
       </Group>
@@ -53,11 +53,11 @@
               <CommandFlag>DefaultInvisible</CommandFlag>
               <CommandFlag>DynamicVisibility</CommandFlag>
           If you do not want an image next to your command, remove the Icon node /> -->
-      <Button guid="guidPinnacleCodingConventionPackageCmdSet" id="CleanUpCommandId" priority="0x0100" type="Button">
-        <Parent guid="guidPinnacleCodingConventionPackageCmdSet" id="EditorContextMenuGroup" />
-        <Icon guid="guidImages" id="bmpPic1" />
+      <Button guid="PinnacleCodingConventionPackageCmdSet" id="CleanUpCommandId" priority="0x0100" type="Button">
+        <Parent guid="PinnacleCodingConventionPackageCmdSet" id="EditorContextMenuGroup" />
+        <Icon guid="Icon" id="commandIcon1" />
         <Strings>
-          <ButtonText>Clean up code</ButtonText>
+          <ButtonText>Pinnacle coding convention cleanup</ButtonText>
         </Strings>
       </Button>
     </Buttons>
@@ -69,27 +69,24 @@
             bitmap strip containing the bitmaps and then there are the numeric ids of the elements used
             inside a button definition. An important aspect of this declaration is that the element id
             must be the actual index (1-based) of the bitmap inside the bitmap strip. -->
-      <Bitmap guid="guidImages" href="Resources\CleanUpCommand.png" usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows, bmpPicStrikethrough"/>
+      <Bitmap guid="Icon" href="Resources\Icon-16x16.png" usedList="commandIcon1"/>
     </Bitmaps>
   </Commands>
 
   <Symbols>
     <!-- This is the package guid. -->
-    <GuidSymbol name="guidPinnacleCodingConventionPackage" value="{2aef4ddf-562d-4264-9929-24f3be06c921}" />
+    <GuidSymbol name="PinnacleCodingConventionPackage" value="{2aef4ddf-562d-4264-9929-24f3be06c921}" />
 
     <!-- This is the guid used to group the menu commands together -->
-    <GuidSymbol name="guidPinnacleCodingConventionPackageCmdSet" value="{a35bce14-852c-484e-a8c0-88371dbc25ad}">
+    <GuidSymbol name="PinnacleCodingConventionPackageCmdSet" value="{a35bce14-852c-484e-a8c0-88371dbc25ad}">
       <IDSymbol name="EditorContextMenuGroup" value="0x1020" />
       <IDSymbol name="CleanUpCommandId" value="0x0100" />
     </GuidSymbol>
 
-    <GuidSymbol name="guidImages" value="{6983fb7c-fd6f-4ea9-a40f-1fdf67357ee7}" >
-      <IDSymbol name="bmpPic1" value="1" />
-      <IDSymbol name="bmpPic2" value="2" />
-      <IDSymbol name="bmpPicSearch" value="3" />
-      <IDSymbol name="bmpPicX" value="4" />
-      <IDSymbol name="bmpPicArrows" value="5" />
-      <IDSymbol name="bmpPicStrikethrough" value="6" />
+    <GuidSymbol name="Icon" value="{6604656D-6C88-457B-8788-1AA26288582E}">
+      <IDSymbol name="commandIcon1" value="1" />
     </GuidSymbol>
+
+    <GuidSymbol name="PinnacleCodingConventionOutputPane" value="{baf6f569-4d9d-4d08-9cf9-6b98cd7a47b1}" />
   </Symbols>
 </CommandTable>

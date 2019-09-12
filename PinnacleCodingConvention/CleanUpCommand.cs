@@ -1,10 +1,9 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.Shell;
+using PinnacleCodingConvention.Common;
+using PinnacleCodingConvention.Helpers;
+using PinnacleCodingConvention.Services;
+using System;
 using System.ComponentModel.Design;
-using System.Globalization;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
 using Task = System.Threading.Tasks.Task;
 
 namespace PinnacleCodingConvention
@@ -17,17 +16,16 @@ namespace PinnacleCodingConvention
         /// <summary>
         /// Command ID.
         /// </summary>
-        public const int CommandId = 0x0100;
-
-        /// <summary>
-        /// Command menu group (command set GUID).
-        /// </summary>
-        public static readonly Guid CommandSet = new Guid("a35bce14-852c-484e-a8c0-88371dbc25ad");
+        public const int CommandId = PackageIds.CleanUpCommandId;
 
         /// <summary>
         /// VS Package that provides this command, not null.
         /// </summary>
-        private readonly AsyncPackage package;
+        private readonly AsyncPackage _package;
+
+        private readonly CleanUpManager _cleanUpService;
+
+        private PinnacleCodingConventionPackage PCCPackage { get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CleanUpCommand"/> class.
@@ -37,31 +35,30 @@ namespace PinnacleCodingConvention
         /// <param name="commandService">Command service to add command to, not null.</param>
         private CleanUpCommand(AsyncPackage package, OleMenuCommandService commandService)
         {
-            this.package = package ?? throw new ArgumentNullException(nameof(package));
+            _package = package ?? throw new ArgumentNullException(nameof(package));
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
 
-            var menuCommandID = new CommandID(CommandSet, CommandId);
-            var menuItem = new MenuCommand(this.Execute, menuCommandID);
+            var menuCommandID = new CommandID(PackageGuids.PinnacleCodingConventionPackageCmdSet, CommandId);
+            var menuItem = new MenuCommand(Execute, menuCommandID);
             commandService.AddCommand(menuItem);
+
+            PCCPackage = (PinnacleCodingConventionPackage)_package;
+            _cleanUpService = CleanUpManager.GetInstance(PCCPackage);
         }
 
         /// <summary>
         /// Gets the instance of the command.
         /// </summary>
-        public static CleanUpCommand Instance
-        {
-            get;
-            private set;
-        }
+        public static CleanUpCommand Instance { get; private set; }
 
         /// <summary>
         /// Gets the service provider from the owner package.
         /// </summary>
-        private Microsoft.VisualStudio.Shell.IAsyncServiceProvider ServiceProvider
+        private IAsyncServiceProvider ServiceProvider
         {
             get
             {
-                return this.package;
+                return _package;
             }
         }
 
@@ -89,17 +86,9 @@ namespace PinnacleCodingConvention
         private void Execute(object sender, EventArgs e)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            string message = string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback()", this.GetType().FullName);
-            string title = "CleanUpCommand";
 
-            // Show a message box to prove we were here
-            VsShellUtilities.ShowMessageBox(
-                this.package,
-                message,
-                title,
-                OLEMSGICON.OLEMSGICON_INFO,
-                OLEMSGBUTTON.OLEMSGBUTTON_OK,
-                OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+            _cleanUpService.Execute(PCCPackage.ActiveDocument);
         }
+
     }
 }
