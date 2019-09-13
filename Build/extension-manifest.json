@@ -12,7 +12,7 @@
   },
   "assetFiles": [
     {
-      "pathOnDisk": "PinnacleCodingConvention\\Resources\\Preview.png",
+      "pathOnDisk": "..\\PinnacleCodingConvention\\Resources\\Preview.png",
       "targetPath": "Resources/Preview.png"
     }
   ],
