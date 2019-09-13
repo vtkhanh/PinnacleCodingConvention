@@ -6,7 +6,6 @@
     <Description xml:space="preserve">This project is about to ensure and automate some coding conventions in the Pinnacle solution. 
 It helps developers to avoid some tedious NW in code review, e.g. A-Z order, missing regions, regions not matched.</Description>
     <Icon>Resources\Icon-48x48.png</Icon>
-    <PreviewImage>Resources\Preview.png</PreviewImage>
     <Preview>true</Preview>
   </Metadata>
   <Installation>
