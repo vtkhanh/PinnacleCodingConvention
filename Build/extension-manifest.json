@@ -10,6 +10,12 @@
       "format"
     ]
   },
+  "assetFiles": [
+    {
+      "pathOnDisk": "\\PinnacleCodingConvention\\Resources\\Preview.png",
+      "targetPath": "Resources\\Preview.png"
+    }
+  ],
   "overview": "../README.md",
   "priceCategory": "free",
   "publisher": "KhanhVu",
