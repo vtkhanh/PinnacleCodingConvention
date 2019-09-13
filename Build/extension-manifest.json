@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json.schemastore.org/vsix-publish",
+  "categories": [
+    "Coding"
+  ],
+  "identity": {
+    "internalName": "PinnacleCodingConvention",
+    "tags": [
+      "cleanup",
+      "format"
+    ]
+  },
+  "overview": "../README.md",
+  "priceCategory": "free",
+  "publisher": "Khanh.Vu",
+  "private": false,
+  "qna": true,
+  "repo": "https://github.com/vtkhanh/PinnacleCodingConvention"
+}
