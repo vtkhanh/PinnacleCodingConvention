@@ -55,6 +55,7 @@ steps:
     Contents: |
       README.md
       Build/**
+      PinnacleCodingConvention/Resources/**
       **/*.vsix
     TargetFolder: '$(Build.ArtifactStagingDirectory)'
 

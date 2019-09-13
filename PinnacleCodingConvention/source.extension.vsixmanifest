@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="51680286-a796-4437-96c7-9cbdd354ed2f" Version="1.0" Language="en-US" Publisher="Khanh Vu" />
+        <Identity Id="51680286-a796-4437-96c7-9cbdd354ed2f" Version="1.0" Language="en-US" Publisher="KhanhVu" />
         <DisplayName>Pinnacle Coding Convention</DisplayName>
         <Description xml:space="preserve">This project is about to ensure and automate some coding conventions in the Pinnacle solution. 
 It helps developers to avoid some tedious NW in code review, e.g. A-Z order, missing regions, regions not matched.</Description>
