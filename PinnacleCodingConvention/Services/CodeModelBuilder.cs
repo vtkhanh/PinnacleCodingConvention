@@ -50,9 +50,28 @@ namespace PinnacleCodingConvention.Services
             var fileCodeModel = RetrieveFileCodeModel(document.ProjectItem);
             RetrieveCodeItems(codeItems, fileCodeModel);
 
-            codeItems.AddRange(_codeModelService.RetrieveCodeRegions(document.GetTextDocument()));
+            var codeRegions = _codeModelService.RetrieveCodeRegions(document.GetTextDocument());
+            MatchCodeItemsWithRegions(codeItems, codeRegions);
+            codeItems.AddRange(codeRegions);
 
             return codeItems;
+        }
+
+        private void MatchCodeItemsWithRegions(List<BaseCodeItem> codeItems, IEnumerable<CodeItemRegion> codeRegions)
+        {
+            foreach (var codeItem in codeItems)
+            {
+                var matchedCodeRegion = codeRegions.FirstOrDefault(region => region.Name == codeItem.Name);
+                if (matchedCodeRegion is object)
+                {
+                    codeItem.StartLine = matchedCodeRegion.StartLine;
+                    codeItem.StartOffset = matchedCodeRegion.StartOffset;
+                    codeItem.StartPoint = matchedCodeRegion.StartPoint;
+                    codeItem.EndLine = matchedCodeRegion.EndLine;
+                    codeItem.EndOffset = matchedCodeRegion.EndOffset;
+                    codeItem.EndPoint = matchedCodeRegion.EndPoint;
+                }
+            }
         }
 
         /// <summary>

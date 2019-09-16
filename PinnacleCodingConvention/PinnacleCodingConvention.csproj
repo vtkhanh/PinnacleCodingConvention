@@ -87,7 +87,6 @@
     <Compile Include="Models\CodeItems\IInterfaceItem.cs" />
     <Compile Include="Models\CodeItems\KindCodeItem.cs" />
     <Compile Include="Models\CodeModel.cs" />
-    <Compile Include="Models\CodeSortOrder.cs" />
     <Compile Include="PinnacleCodingConvention.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -101,11 +100,9 @@
       <DependentUpon>Resource.resx</DependentUpon>
     </Compile>
     <Compile Include="Services\CleanUpManager.cs" />
-    <Compile Include="Services\CodeItemOrder.cs" />
     <Compile Include="Services\CodeItemReorganizer.cs" />
     <Compile Include="Services\CodeItemRetriever.cs" />
     <Compile Include="Services\CodeModelBuilder.cs" />
-    <Compile Include="Services\CodeModelCache.cs" />
     <Compile Include="Services\CodeModelService.cs" />
     <Compile Include="Services\CodeTreeBuilder.cs" />
     <Compile Include="Services\BlankLineInsertService.cs" />

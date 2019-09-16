@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using EnvDTE;
+﻿using EnvDTE;
 using Microsoft.VisualStudio.Shell;
 using PinnacleCodingConvention.Helpers;
-using PinnacleCodingConvention.Models;
 using PinnacleCodingConvention.Models.CodeItems;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace PinnacleCodingConvention.Services
 {
@@ -13,8 +11,8 @@ namespace PinnacleCodingConvention.Services
     {
         private static CleanUpManager _instance;
         private CodeItemRetriever _codeItemRetriever;
-        private CodeItemOrder _codeItemOrder;
         private CodeItemReorganizer _codeItemReorganizer;
+        private CodeTreeBuilder _codeTreeBuilder;
 
         private readonly PinnacleCodingConventionPackage _package;
 
@@ -23,8 +21,8 @@ namespace PinnacleCodingConvention.Services
             _package = package;
 
             _codeItemRetriever = CodeItemRetriever.GetInstance(package);
-            _codeItemOrder = CodeItemOrder.GetInstance();
             _codeItemReorganizer = CodeItemReorganizer.GetInstance(package);
+            _codeTreeBuilder = CodeTreeBuilder.GetInstance();
         }
 
         internal static CleanUpManager GetInstance(PinnacleCodingConventionPackage package) => _instance ?? (_instance = new CleanUpManager(package));
@@ -36,10 +34,24 @@ namespace PinnacleCodingConvention.Services
             new UndoTransactionHelper(_package, document.Name).Run(() =>
             {
                 var codeItems = _codeItemRetriever.Retrieve(document).Where(item => !(item is CodeItemUsingStatement));
-                codeItems = _codeItemOrder.Order(codeItems, CodeSortOrder.Alpha);
+                codeItems = GetStructuredCodeItems(codeItems);
                 codeItems = _codeItemReorganizer.Reorganize(codeItems);
                 OutputWindowHelper.PrintCodeItems(codeItems);
             });
+        }
+
+        private IEnumerable<BaseCodeItem> GetStructuredCodeItems(IEnumerable<BaseCodeItem> codeItems)
+        {
+            var result = new List<BaseCodeItem>();
+
+            if (codeItems is object)
+            {
+                var codeItemsWithoutRegions = codeItems.Where(x => !(x is CodeItemRegion));
+                var structuredCodeItems = _codeTreeBuilder.Build(codeItemsWithoutRegions);
+                result.AddRange(structuredCodeItems);
+            }
+
+            return result;
         }
 
     }
