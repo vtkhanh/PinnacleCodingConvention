@@ -23,7 +23,9 @@ namespace PinnacleCodingConvention.Services
         internal IList<BaseCodeItem> Retrieve(Document document, bool loadLazyInitializedValues = false)
         {
             if (document == null)
+            {
                 throw new ArgumentNullException(nameof(document));
+            }
 
             var codeModel = new CodeModel(document);
             BuildCodeItems(codeModel);
@@ -47,7 +49,6 @@ namespace PinnacleCodingConvention.Services
                 OutputWindowHelper.WriteError($"Unable to build code model for '{codeModel.Document.FullName}': {ex}");
 
                 codeModel.CodeItems = new List<BaseCodeItem>();
-                //codeModel.IsBuilding = false;
             }
         }
 

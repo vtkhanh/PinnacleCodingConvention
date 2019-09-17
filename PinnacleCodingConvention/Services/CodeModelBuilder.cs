@@ -61,16 +61,7 @@ namespace PinnacleCodingConvention.Services
         {
             foreach (var codeItem in codeItems)
             {
-                var matchedCodeRegion = codeRegions.FirstOrDefault(region => region.Name == codeItem.Name);
-                if (matchedCodeRegion is object)
-                {
-                    codeItem.StartLine = matchedCodeRegion.StartLine;
-                    codeItem.StartOffset = matchedCodeRegion.StartOffset;
-                    codeItem.StartPoint = matchedCodeRegion.StartPoint;
-                    codeItem.EndLine = matchedCodeRegion.EndLine;
-                    codeItem.EndOffset = matchedCodeRegion.EndOffset;
-                    codeItem.EndPoint = matchedCodeRegion.EndPoint;
-                }
+                codeItem.AssociatedCodeRegion = codeRegions.FirstOrDefault(region => region.Name == codeItem.Name);
             }
         }
 

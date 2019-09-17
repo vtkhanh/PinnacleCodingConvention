@@ -33,7 +33,9 @@ namespace PinnacleCodingConvention.Services
                 var item = desiredOrder[desiredIndex];
 
                 if (item is ICodeItemParent itemAsParent && ShouldReorganizeChildren(item))
+                {
                     Reorganize(itemAsParent.Children);
+                }
 
                 int currentIndex = currentOrder.IndexOf(item);
                 if (desiredIndex != currentIndex)
@@ -65,14 +67,16 @@ namespace PinnacleCodingConvention.Services
         private void RepositionItemAboveBase(BaseCodeItem itemToMove, BaseCodeItem baseItem)
         {
             if (itemToMove == baseItem)
+            {
                 return;
+            }
 
             bool separateWithNewLine = ShouldBeSeparatedByNewLine(itemToMove, baseItem);
             CutItemToMove(itemToMove, out int cursorOffset);
             PasteAboveBaseItem(baseItem, separateWithNewLine, cursorOffset);
 
-            itemToMove.RefreshCachedPositionAndName();
-            baseItem.RefreshCachedPositionAndName();
+            //itemToMove.RefreshCachedPositionAndName();
+            //baseItem.RefreshCachedPositionAndName();
         }
 
         /// <summary>
@@ -97,16 +101,20 @@ namespace PinnacleCodingConvention.Services
         private static void CutItemToMove(BaseCodeItem itemToRemove, out int cursorOffset)
         {
             // Refresh the code item and capture its end points.
-            itemToRemove.RefreshCachedPositionAndName();
+            //itemToRemove.RefreshCachedPositionAndName();
             var removeStartPoint = itemToRemove.StartPoint;
             var removeEndPoint = itemToRemove.EndPoint;
 
             // Determine the cursor's offset if within the item being removed.
             var cursorAbsoluteOffset = removeStartPoint.Parent.Selection.ActivePoint.AbsoluteCharOffset;
             if (cursorAbsoluteOffset >= removeStartPoint.AbsoluteCharOffset && cursorAbsoluteOffset <= removeEndPoint.AbsoluteCharOffset)
+            {
                 cursorOffset = cursorAbsoluteOffset - removeStartPoint.AbsoluteCharOffset;
+            }
             else
+            {
                 cursorOffset = -1;
+            }
 
             // Capture the text and cleanup whitespace.
             removeStartPoint.Cut(removeEndPoint);
@@ -121,20 +129,24 @@ namespace PinnacleCodingConvention.Services
         /// <param name="cursorOffset"></param>
         private static void PasteAboveBaseItem(BaseCodeItem baseItem, bool separateWithNewLine, int cursorOffset)
         {
-            baseItem.RefreshCachedPositionAndName();
+            //baseItem.RefreshCachedPositionAndName();
             var baseStartPoint = baseItem.StartPoint;
             var pastePoint = baseStartPoint.CreateEditPoint();
 
             pastePoint.Paste();
             pastePoint.Insert(Environment.NewLine);
             if (separateWithNewLine)
+            {
                 pastePoint.Insert(Environment.NewLine);
+            }
 
             pastePoint.EndOfLine();
             baseStartPoint.SmartFormat(pastePoint);
 
             if (cursorOffset >= 0)
+            {
                 baseStartPoint.Parent.Selection.MoveToAbsoluteOffset(baseStartPoint.AbsoluteCharOffset + cursorOffset);
+            }
         }
 
         /// <summary>
@@ -148,7 +160,7 @@ namespace PinnacleCodingConvention.Services
             var codeItemElements = codeItems.OfType<BaseCodeItemElement>().ToList();
 
             // Refresh them to make sure all positions are updated.
-            codeItemElements.ForEach(x => x.RefreshCachedPositionAndName());
+            //codeItemElements.ForEach(x => x.RefreshCachedPositionAndName());
 
             // Sort the items, pulling out the first item in a set if there are items sharing a definition (ex: fields).
             codeItemElements = codeItemElements.GroupBy(item => item.StartOffset).Select(y => y.First()).OrderBy(z => z.StartOffset).ToList();
@@ -165,7 +177,9 @@ namespace PinnacleCodingConvention.Services
         {
             // Enumeration values should never be reordered.
             if (parent is CodeItemEnum)
+            {
                 return false;
+            }
 
             var parentAttributes = parent.Attributes;
             if (parentAttributes is object)
@@ -178,7 +192,9 @@ namespace PinnacleCodingConvention.Services
                 };
 
                 if (parentAttributes.OfType<CodeAttribute>().Any(x => attributesToIgnore.Contains(x.FullName)))
+                {
                     return false;
+                }
             }
 
             return true;

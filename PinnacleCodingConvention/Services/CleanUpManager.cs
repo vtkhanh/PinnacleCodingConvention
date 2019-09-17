@@ -33,26 +33,11 @@ namespace PinnacleCodingConvention.Services
 
             new UndoTransactionHelper(_package, document.Name).Run(() =>
             {
-                var codeItems = _codeItemRetriever.Retrieve(document).Where(item => !(item is CodeItemUsingStatement));
-                codeItems = GetStructuredCodeItems(codeItems);
+                var codeItems = _codeItemRetriever.Retrieve(document).Where(item => !(item is CodeItemUsingStatement) && !(item is CodeItemRegion));
+                codeItems = _codeTreeBuilder.Build(codeItems);
                 codeItems = _codeItemReorganizer.Reorganize(codeItems);
                 OutputWindowHelper.PrintCodeItems(codeItems);
             });
         }
-
-        private IEnumerable<BaseCodeItem> GetStructuredCodeItems(IEnumerable<BaseCodeItem> codeItems)
-        {
-            var result = new List<BaseCodeItem>();
-
-            if (codeItems is object)
-            {
-                var codeItemsWithoutRegions = codeItems.Where(x => !(x is CodeItemRegion));
-                var structuredCodeItems = _codeTreeBuilder.Build(codeItemsWithoutRegions);
-                result.AddRange(structuredCodeItems);
-            }
-
-            return result;
-        }
-
     }
 }

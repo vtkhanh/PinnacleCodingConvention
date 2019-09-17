@@ -51,6 +51,8 @@ namespace PinnacleCodingConvention.Models.CodeItems
         /// </summary>
         public virtual EditPoint EndPoint { get; set; }
 
+        public CodeItemRegion AssociatedCodeRegion { get; set; }
+
         /// <summary>
         /// Gets a flag indicating if this is a code item that spans multiple lines.
         /// </summary>

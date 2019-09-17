@@ -30,12 +30,13 @@ namespace PinnacleCodingConvention.Models.CodeItems
         /// <summary>
         /// Gets the start point adjusted for leading comments, may be null.
         /// </summary>
-        public override EditPoint StartPoint => CodeElement != null ? GetStartPointAdjustedForComments(CodeElement.GetStartPoint()) : null;
+        public override EditPoint StartPoint => GetStartPoint();
+
 
         /// <summary>
         /// Gets the end point, may be null.
         /// </summary>
-        public override EditPoint EndPoint => CodeElement?.GetEndPoint().CreateEditPoint();
+        public override EditPoint EndPoint => GetEndPoint();
 
         /// <summary>
         /// Loads all lazy initialized values immediately.
@@ -125,6 +126,34 @@ namespace PinnacleCodingConvention.Models.CodeItems
 
                 return default;
             }
+        }
+
+        /// <summary>
+        /// Get StartPoint adjusted for leading comment & its region if any
+        /// </summary>
+        /// <returns></returns>
+        private EditPoint GetStartPoint()
+        {
+            if (CodeElement != null)
+            {
+                var startPointAdjustedForComment = GetStartPointAdjustedForComments(CodeElement.GetStartPoint());
+                if (AssociatedCodeRegion is object && AssociatedCodeRegion.StartPoint.Line < startPointAdjustedForComment.Line)
+                {
+                    return AssociatedCodeRegion.StartPoint;
+                }
+                return startPointAdjustedForComment;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Get EndPoint adjusted for its region if any
+        /// </summary>
+        /// <returns></returns>
+        private EditPoint GetEndPoint()
+        {
+            return AssociatedCodeRegion is object ? AssociatedCodeRegion.EndPoint : CodeElement?.GetEndPoint().CreateEditPoint();
         }
 
         /// <summary>
