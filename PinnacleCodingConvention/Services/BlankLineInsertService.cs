@@ -11,8 +11,6 @@ namespace PinnacleCodingConvention.Services
     /// </summary>
     internal class BlankLineInsertService
     {
-        private readonly PinnacleCodingConventionPackage _package;
-
         /// <summary>
         /// The singleton instance of the <see cref="BlankLineInsertService" /> class.
         /// </summary>
@@ -23,16 +21,16 @@ namespace PinnacleCodingConvention.Services
         /// </summary>
         /// <param name="package">The hosting package.</param>
         /// <returns>An instance of the <see cref="BlankLineInsertService" /> class.</returns>
-        internal static BlankLineInsertService GetInstance(PinnacleCodingConventionPackage package)
+        internal static BlankLineInsertService GetInstance()
         {
-            return _instance ?? (_instance = new BlankLineInsertService(package));
+            return _instance ?? (_instance = new BlankLineInsertService());
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BlankLineInsertService" /> class.
         /// </summary>
         /// <param name="package">The hosting package.</param>
-        private BlankLineInsertService(PinnacleCodingConventionPackage package) => _package = package;
+        private BlankLineInsertService() { }
 
         /// <summary>
         /// Determines if the specified code item instance should be preceded by a blank line.
@@ -47,22 +45,7 @@ namespace PinnacleCodingConvention.Services
                 return false;
             }
 
-            switch (codeItem.Kind)
-            {
-                case KindCodeItem.Class:
-                case KindCodeItem.Interface:
-                case KindCodeItem.Namespace:
-                case KindCodeItem.Constructor:
-                case KindCodeItem.Destructor:
-                case KindCodeItem.Method:
-                case KindCodeItem.Region:
-                case KindCodeItem.Struct:
-                case KindCodeItem.Property:
-                    return true;
-
-                default:
-                    return false;
-            }
+            return codeItem.AssociatedCodeRegion is object;
         }
 
         /// <summary>
@@ -78,22 +61,7 @@ namespace PinnacleCodingConvention.Services
                 return false;
             }
 
-            switch (codeItem.Kind)
-            {
-                case KindCodeItem.Class:
-                case KindCodeItem.Interface:
-                case KindCodeItem.Namespace:
-                case KindCodeItem.Constructor:
-                case KindCodeItem.Destructor:
-                case KindCodeItem.Method:
-                case KindCodeItem.Region:
-                case KindCodeItem.Struct:
-                case KindCodeItem.Property:
-                    return true;
-
-                default:
-                    return false;
-            }
+            return codeItem.AssociatedCodeRegion is object;
         }
 
         /// <summary>

@@ -59,10 +59,10 @@ namespace PinnacleCodingConvention.Helpers
         {
             int typeOffset = CalculateTypeOffset(codeItem);
             int constantOffset = CalculateConstantOffset(codeItem);
-            int staticOffset = CalculateStaticOffset(codeItem);
+            //int staticOffset = CalculateStaticOffset(codeItem);
             int readOnlyOffset = CalculateReadOnlyOffset(codeItem);
 
-            int calc = typeOffset * 1000 + constantOffset * 100 + staticOffset * 10 + readOnlyOffset;
+            int calc = typeOffset * 1000 + constantOffset * 100 + readOnlyOffset;
 
             return calc;
         }

@@ -1,11 +1,8 @@
 ﻿using EnvDTE;
 using PinnacleCodingConvention.Helpers;
 using PinnacleCodingConvention.Models.CodeItems;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PinnacleCodingConvention.Services
 {
@@ -73,10 +70,14 @@ namespace PinnacleCodingConvention.Services
         private FileCodeModel RetrieveFileCodeModel(ProjectItem projectItem)
         {
             if (projectItem == null)
+            {
                 return null;
+            }
 
             if (projectItem.FileCodeModel != null)
+            {
                 return projectItem.FileCodeModel;
+            }
 
             // If this project item is part of a shared project, retrieve the FileCodeModel via a similar platform project item.
             const string sharedProjectTypeGUID = "{d954291e-2a0b-460d-934e-dc6b0785db48}";
@@ -103,7 +104,9 @@ namespace PinnacleCodingConvention.Services
         private static void RetrieveCodeItems(IList<BaseCodeItem> codeItems, FileCodeModel fileCodeModel)
         {
             if (fileCodeModel != null && fileCodeModel.CodeElements != null)
+            {
                 RetrieveCodeItemsFromElements(codeItems, fileCodeModel.CodeElements);
+            }
         }
 
         /// <summary>
@@ -130,10 +133,14 @@ namespace PinnacleCodingConvention.Services
             var codeItem = FactoryCodeItems.CreateCodeItemElement(codeElement);
 
             if (codeItem != null)
+            {
                 codeItems.Add(codeItem);
+            }
 
             if (codeElement.Children != null)
+            {
                 RetrieveCodeItemsFromElements(codeItems, codeElement.Children);
+            }
         }
     }
 }

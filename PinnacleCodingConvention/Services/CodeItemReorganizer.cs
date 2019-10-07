@@ -9,18 +9,20 @@ namespace PinnacleCodingConvention.Services
 {
     internal class CodeItemReorganizer
     {
-        private static CodeItemReorganizer _instance;
-
         private readonly BlankLineInsertService _blankLineInsertService;
 
-        private CodeItemReorganizer(PinnacleCodingConventionPackage package) => _blankLineInsertService = BlankLineInsertService.GetInstance(package);
+        private static CodeItemReorganizer _instance;
 
-        internal static CodeItemReorganizer GetInstance(PinnacleCodingConventionPackage package) => _instance ?? (_instance = new CodeItemReorganizer(package));
+        private CodeItemReorganizer() => _blankLineInsertService = BlankLineInsertService.GetInstance();
+
+        internal static CodeItemReorganizer GetInstance() => _instance ?? (_instance = new CodeItemReorganizer());
 
         internal IEnumerable<BaseCodeItem> Reorganize(IEnumerable<BaseCodeItem> codeItems)
         {
             if (!codeItems.Any())
+            {
                 return codeItems;
+            }
             
             // Get the items in their current order and their desired order.
             var currentOrder = GetReorganizableCodeItemElements(codeItems);
@@ -74,9 +76,6 @@ namespace PinnacleCodingConvention.Services
             bool separateWithNewLine = ShouldBeSeparatedByNewLine(itemToMove, baseItem);
             CutItemToMove(itemToMove, out int cursorOffset);
             PasteAboveBaseItem(baseItem, separateWithNewLine, cursorOffset);
-
-            //itemToMove.RefreshCachedPositionAndName();
-            //baseItem.RefreshCachedPositionAndName();
         }
 
         /// <summary>
@@ -100,8 +99,6 @@ namespace PinnacleCodingConvention.Services
         /// </param>
         private static void CutItemToMove(BaseCodeItem itemToRemove, out int cursorOffset)
         {
-            // Refresh the code item and capture its end points.
-            //itemToRemove.RefreshCachedPositionAndName();
             var removeStartPoint = itemToRemove.StartPoint;
             var removeEndPoint = itemToRemove.EndPoint;
 
@@ -129,7 +126,6 @@ namespace PinnacleCodingConvention.Services
         /// <param name="cursorOffset"></param>
         private static void PasteAboveBaseItem(BaseCodeItem baseItem, bool separateWithNewLine, int cursorOffset)
         {
-            //baseItem.RefreshCachedPositionAndName();
             var baseStartPoint = baseItem.StartPoint;
             var pastePoint = baseStartPoint.CreateEditPoint();
 
@@ -158,9 +154,6 @@ namespace PinnacleCodingConvention.Services
         {
             // Get all code item elements.
             var codeItemElements = codeItems.OfType<BaseCodeItemElement>().ToList();
-
-            // Refresh them to make sure all positions are updated.
-            //codeItemElements.ForEach(x => x.RefreshCachedPositionAndName());
 
             // Sort the items, pulling out the first item in a set if there are items sharing a definition (ex: fields).
             codeItemElements = codeItemElements.GroupBy(item => item.StartOffset).Select(y => y.First()).OrderBy(z => z.StartOffset).ToList();
