@@ -2,26 +2,25 @@
 using Microsoft.VisualStudio.Shell;
 using PinnacleCodingConvention.Helpers;
 using PinnacleCodingConvention.Models.CodeItems;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace PinnacleCodingConvention.Services
 {
     internal sealed class CleanUpManager
     {
-        private static CleanUpManager _instance;
-        private CodeItemRetriever _codeItemRetriever;
-        private CodeItemReorganizer _codeItemReorganizer;
-        private CodeTreeBuilder _codeTreeBuilder;
-
         private readonly PinnacleCodingConventionPackage _package;
+        private readonly CodeItemRetriever _codeItemRetriever;
+        private readonly CodeItemReorganizer _codeItemReorganizer;
+        private readonly CodeTreeBuilder _codeTreeBuilder;
+
+        private static CleanUpManager _instance;
 
         private CleanUpManager(PinnacleCodingConventionPackage package)
         {
             _package = package;
 
             _codeItemRetriever = CodeItemRetriever.GetInstance(package);
-            _codeItemReorganizer = CodeItemReorganizer.GetInstance(package);
+            _codeItemReorganizer = CodeItemReorganizer.GetInstance();
             _codeTreeBuilder = CodeTreeBuilder.GetInstance();
         }
 
