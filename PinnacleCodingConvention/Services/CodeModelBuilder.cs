@@ -48,7 +48,7 @@ namespace PinnacleCodingConvention.Services
             RetrieveCodeItems(codeItems, fileCodeModel);
 
             var codeRegions = _codeModelService.RetrieveCodeRegions(document.GetTextDocument());
-            MatchCodeItemsWithRegions(codeItems, codeRegions);
+            //MatchCodeItemsWithRegions(codeItems, codeRegions);
             codeItems.AddRange(codeRegions);
 
             return codeItems;

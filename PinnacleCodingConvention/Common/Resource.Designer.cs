@@ -88,6 +88,15 @@ namespace PinnacleCodingConvention.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Remove region.
+        /// </summary>
+        internal static string RemoveRegion {
+            get {
+                return ResourceManager.GetString("RemoveRegion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to See output for more information.
         /// </summary>
         internal static string SeeOutputForMoreInformation {

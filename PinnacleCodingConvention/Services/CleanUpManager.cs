@@ -12,6 +12,7 @@ namespace PinnacleCodingConvention.Services
         private readonly CodeItemRetriever _codeItemRetriever;
         private readonly CodeItemReorganizer _codeItemReorganizer;
         private readonly CodeTreeBuilder _codeTreeBuilder;
+        private readonly CodeRegionService _codeRegionService;
 
         private static CleanUpManager _instance;
 
@@ -22,6 +23,7 @@ namespace PinnacleCodingConvention.Services
             _codeItemRetriever = CodeItemRetriever.GetInstance(package);
             _codeItemReorganizer = CodeItemReorganizer.GetInstance();
             _codeTreeBuilder = CodeTreeBuilder.GetInstance();
+            _codeRegionService = CodeRegionService.GetInstance();
         }
 
         internal static CleanUpManager GetInstance(PinnacleCodingConventionPackage package) => _instance ?? (_instance = new CleanUpManager(package));
@@ -32,7 +34,8 @@ namespace PinnacleCodingConvention.Services
 
             new UndoTransactionHelper(_package, document.Name).Run(() =>
             {
-                var codeItems = _codeItemRetriever.Retrieve(document).Where(item => !(item is CodeItemUsingStatement) && !(item is CodeItemRegion));
+                var codeItems = _codeItemRetriever.Retrieve(document).Where(item => !(item is CodeItemUsingStatement));
+                codeItems = _codeRegionService.Cleanup(codeItems);
                 codeItems = _codeTreeBuilder.Build(codeItems);
                 codeItems = _codeItemReorganizer.Reorganize(codeItems);
                 OutputWindowHelper.PrintCodeItems(codeItems);

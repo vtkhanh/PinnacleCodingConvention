@@ -126,6 +126,9 @@
   <data name="Info" xml:space="preserve">
     <value>Info</value>
   </data>
+  <data name="RemoveRegion" xml:space="preserve">
+    <value>Remove region</value>
+  </data>
   <data name="SeeOutputForMoreInformation" xml:space="preserve">
     <value>See output for more information</value>
   </data>

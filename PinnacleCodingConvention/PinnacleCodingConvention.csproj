@@ -104,6 +104,7 @@
     <Compile Include="Services\CodeItemRetriever.cs" />
     <Compile Include="Services\CodeModelBuilder.cs" />
     <Compile Include="Services\CodeModelService.cs" />
+    <Compile Include="Services\CodeRegionService.cs" />
     <Compile Include="Services\CodeTreeBuilder.cs" />
     <Compile Include="Services\BlankLineInsertService.cs" />
   </ItemGroup>
