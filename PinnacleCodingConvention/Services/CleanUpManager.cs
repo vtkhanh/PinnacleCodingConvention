@@ -23,7 +23,7 @@ namespace PinnacleCodingConvention.Services
             _codeItemRetriever = CodeItemRetriever.GetInstance(package);
             _codeItemReorganizer = CodeItemReorganizer.GetInstance();
             _codeTreeBuilder = CodeTreeBuilder.GetInstance();
-            _codeRegionService = CodeRegionService.GetInstance();
+            _codeRegionService = CodeRegionService.GetInstance(package);
         }
 
         internal static CleanUpManager GetInstance(PinnacleCodingConventionPackage package) => _instance ?? (_instance = new CleanUpManager(package));
