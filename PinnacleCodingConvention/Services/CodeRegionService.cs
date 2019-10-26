@@ -10,67 +10,107 @@ namespace PinnacleCodingConvention.Services
 {
     internal class CodeRegionService
     {
-        private PinnacleCodingConventionPackage _package;
         private static CodeRegionService _instance;
 
-        private CodeRegionService(PinnacleCodingConventionPackage package) => _package = package;
+        private CodeRegionService() { }
 
-        public static CodeRegionService GetInstance(PinnacleCodingConventionPackage package) => _instance ?? (_instance = new CodeRegionService(package));
+        public static CodeRegionService GetInstance() => _instance ?? (_instance = new CodeRegionService());
 
-        public IEnumerable<BaseCodeItem> Cleanup(IEnumerable<BaseCodeItem> codeItems)
+        public IEnumerable<BaseCodeItem> CleanupExistingRegions(IEnumerable<BaseCodeItem> codeItems)
         {
-            // 1. Clean all existing regions
-            // 2. Then, add mandatory regions
-            codeItems = CleanExistingRegions(codeItems);
-            codeItems = AddRegions(codeItems);
-            return codeItems;
-        }
-
-        private IEnumerable<BaseCodeItem> AddRegions(IEnumerable<BaseCodeItem> codeItems)
-        {
-            AddRegionsToMethods(codeItems.Where(item => item.Kind == KindCodeItem.Method).Select(item => item as CodeItemMethod));
-            AddRegionsToProperties(codeItems.Where(item => item.Kind == KindCodeItem.Property && item.StartLine != item.EndLine));
-
-            return codeItems;
-        }
-
-        
-        private void AddRegionsToMethods(IEnumerable<CodeItemMethod> codeItems)
-        {
-            var methodGroups = codeItems.GroupBy(item => item.Name);
-            foreach (var group in methodGroups)
+            // Remove in descending order to reduce line number updates.
+            var regionsToClean = codeItems
+                .Where(codeItem => codeItem.Kind == KindCodeItem.Region)
+                .OrderByDescending(region => region.StartLine);
+            foreach (var region in regionsToClean)
             {
-                foreach (var method in group)
+                RemoveRegion(region as CodeItemRegion);
+            }
+
+            return codeItems.Where(codeItem => codeItem.Kind != KindCodeItem.Region);
+        }
+
+        public IEnumerable<BaseCodeItem> AddRequiredRegions(IEnumerable<BaseCodeItem> codeItems)
+        {
+            // Regions to each Method
+            AddRegionsToCodeItems(codeItems.Where(item => item.Kind == KindCodeItem.Method));
+            // Regions to each Property
+            AddRegionsToCodeItems(codeItems.Where(item => item.Kind == KindCodeItem.Property && item.StartLine != item.EndLine));
+            // Region to Class Variables
+            AddBlockRegion(codeItems, KindCodeItem.Field, Resource.ClassVariablesRegion);
+            // Region to Constructors
+            AddBlockRegion(codeItems, KindCodeItem.Constructor, Resource.ConstructorsRegion);
+            // Region to Methods
+            AddBlockRegion(codeItems, KindCodeItem.Method, Resource.MethodsRegion);
+            // Region to Properties
+            AddBlockRegion(codeItems, KindCodeItem.Property, Resource.PropertiesRegion);
+            // Region to Classes
+            AddClassRegions(codeItems);
+
+            foreach (var item in codeItems)
+            {
+                if (item is ICodeItemParent parent && parent.Children.Any())
                 {
-                    var regionName = group.Count() > 1
-                        ? $"{group.Key}({string.Join(",", method.Parameters.Select(param => $"{param.Name}"))})"
+                    AddRequiredRegions(parent.Children);
+                }
+            }
+
+            return codeItems;
+        }
+
+        private void AddClassRegions(IEnumerable<BaseCodeItem> codeItems)
+        {
+            var codeItemClasses = codeItems.Where(item => item.Kind == KindCodeItem.Class);
+            foreach (var codeItemClass in codeItemClasses)
+            {
+                InsertRegionTag($": {codeItemClass.Name} :", codeItemClass.StartPoint);
+                InsertEndRegionTag(codeItemClass.EndPoint);
+            }
+        }
+
+        private void AddBlockRegion(IEnumerable<BaseCodeItem> codeItems, KindCodeItem kind, string regionName)
+        {
+            var codeItemsByKind = codeItems.Where(item => item.Kind == kind).OrderBy(item => item.StartPoint.Line);
+            if (!codeItemsByKind.Any())
+            {
+                return;
+            }
+
+            InsertRegionTag(regionName, codeItemsByKind.First().StartPoint);
+            InsertEndRegionTag(codeItemsByKind.Last().EndPoint);
+        }
+
+        private void AddRegionsToCodeItems(IEnumerable<BaseCodeItem> codeItems)
+        {
+            var groups = codeItems.GroupBy(item => item.Name);
+            foreach (var group in groups)
+            {
+                foreach (var codeItem in group)
+                {
+                    var regionName = group.Count() > 1 && codeItem is CodeItemMethod codeItemMethod
+                        ? $"{group.Key}({string.Join(", ", codeItemMethod.Parameters.Select(GetParameterText))})"
                         : group.Key;
-                    var regionStartPoint = InsertRegionTag(regionName, method.StartPoint);
-                    var regionEndPoint = InsertEndRegionTag(method.EndPoint);
-                    method.AssociatedCodeRegion = new CodeItemRegion
+                    var regionStartPoint = InsertRegionTag(regionName, codeItem.StartPoint);
+                    var regionEndPoint = InsertEndRegionTag(codeItem.EndPoint);
+                    codeItem.AssociatedCodeRegion = new CodeItemRegion
                     {
                         Name = regionName,
                         StartPoint = regionStartPoint,
                         EndPoint = regionEndPoint
                     };
                 }
+
+                // Add Block region (eg: for overloading methods)
+                if (group.Count() > 1)
+                {
+                    var sortedItems = group.ToList().OrderBy(item => item.StartPoint.Line);
+                    InsertRegionTag($"{group.Key}...", sortedItems.First().StartPoint);
+                    InsertEndRegionTag(sortedItems.Last().EndPoint);
+                }
             }
         }
 
-        private void AddRegionsToProperties(IEnumerable<BaseCodeItem> properties)
-        {
-            foreach (var property in properties)
-            {
-                var regionStartPoint = InsertRegionTag(property.Name, property.StartPoint);
-                var regionEndPoint = InsertEndRegionTag(property.EndPoint);
-                property.AssociatedCodeRegion = new CodeItemRegion
-                {
-                    Name = property.Name,
-                    StartPoint = regionStartPoint,
-                    EndPoint = regionEndPoint
-                };
-            }
-        }
+        private static string GetParameterText(CodeParameter param) => $"{param.GetStartPoint().CreateEditPoint().GetText(param.GetEndPoint())}";
 
         private EditPoint InsertRegionTag(string regionName, EditPoint startPoint)
         {
@@ -123,18 +163,6 @@ namespace PinnacleCodingConvention.Services
             return cursor;
         }
 
-        private IEnumerable<BaseCodeItem> CleanExistingRegions(IEnumerable<BaseCodeItem> codeItems)
-        {
-            // Remove in descending order to reduce line number updates.
-            var regionsToClean = codeItems.Where(codeItem => codeItem.Kind == KindCodeItem.Region).OrderByDescending(region => region.StartLine);
-            foreach (var region in regionsToClean)
-            {
-                RemoveRegion(region as CodeItemRegion);
-            }
-
-            return codeItems.Where(codeItem => codeItem.Kind != KindCodeItem.Region);
-        }
-
         private void RemoveRegion(CodeItemRegion region)
         {
             if (region is null || region.IsInvalidated || region.IsPseudoGroup || region.StartLine <= 0 || region.EndLine <= 0)
@@ -142,22 +170,19 @@ namespace PinnacleCodingConvention.Services
                 return;
             }
 
-            new UndoTransactionHelper(_package, region.Name).Run(() =>
-            {
-                var end = region.EndPoint.CreateEditPoint();
-                end.StartOfLine();
-                end.Delete(end.LineLength);
-                end.DeleteWhitespace(vsWhitespaceOptions.vsWhitespaceOptionsVertical);
-                end.Insert(Environment.NewLine);
+            var end = region.EndPoint.CreateEditPoint();
+            end.StartOfLine();
+            end.Delete(end.LineLength);
+            end.DeleteWhitespace(vsWhitespaceOptions.vsWhitespaceOptionsVertical);
+            end.Insert(Environment.NewLine);
 
-                var start = region.StartPoint.CreateEditPoint();
-                start.StartOfLine();
-                start.Delete(start.LineLength);
-                start.DeleteWhitespace(vsWhitespaceOptions.vsWhitespaceOptionsVertical);
-                start.Insert(Environment.NewLine);
+            var start = region.StartPoint.CreateEditPoint();
+            start.StartOfLine();
+            start.Delete(start.LineLength);
+            start.DeleteWhitespace(vsWhitespaceOptions.vsWhitespaceOptionsVertical);
+            start.Insert(Environment.NewLine);
 
-                region.IsInvalidated = true;
-            });
+            region.IsInvalidated = true;
         }
     }
 }

@@ -51,13 +51,6 @@ namespace PinnacleCodingConvention.Services
                 }
             }
 
-            // Recursively reorganize the contents of any regions as well.
-            var codeItemRegions = codeItems.OfType<CodeItemRegion>();
-            foreach (var codeItemRegion in codeItemRegions)
-            {
-                Reorganize(codeItemRegion.Children);
-            }
-
             return codeItems;
         }
 

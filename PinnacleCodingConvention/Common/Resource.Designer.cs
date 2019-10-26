@@ -61,6 +61,24 @@ namespace PinnacleCodingConvention.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Class Variable(s)....
+        /// </summary>
+        internal static string ClassVariablesRegion {
+            get {
+                return ResourceManager.GetString("ClassVariablesRegion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Constructor(s)....
+        /// </summary>
+        internal static string ConstructorsRegion {
+            get {
+                return ResourceManager.GetString("ConstructorsRegion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error.
         /// </summary>
         internal static string Error {
@@ -84,6 +102,24 @@ namespace PinnacleCodingConvention.Common {
         internal static string Info {
             get {
                 return ResourceManager.GetString("Info", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Methods....
+        /// </summary>
+        internal static string MethodsRegion {
+            get {
+                return ResourceManager.GetString("MethodsRegion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Properties....
+        /// </summary>
+        internal static string PropertiesRegion {
+            get {
+                return ResourceManager.GetString("PropertiesRegion", resourceCulture);
             }
         }
         
