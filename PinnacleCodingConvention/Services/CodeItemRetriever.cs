@@ -9,8 +9,9 @@ namespace PinnacleCodingConvention.Services
 {
     internal class CodeItemRetriever
     {
+        private readonly CodeModelBuilder _codeModelBuilder;
+
         private static CodeItemRetriever _instance;
-        private CodeModelBuilder _codeModelBuilder;
 
         private CodeItemRetriever(PinnacleCodingConventionPackage package)
         {

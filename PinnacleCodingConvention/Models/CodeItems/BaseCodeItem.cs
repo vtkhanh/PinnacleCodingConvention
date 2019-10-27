@@ -51,6 +51,9 @@ namespace PinnacleCodingConvention.Models.CodeItems
         /// </summary>
         public virtual EditPoint EndPoint { get; set; }
 
+        /// <summary>
+        /// Gets or sets the code region of the element
+        /// </summary>
         public CodeItemRegion AssociatedCodeRegion { get; set; }
 
         /// <summary>

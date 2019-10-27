@@ -59,10 +59,9 @@ namespace PinnacleCodingConvention.Helpers
         {
             int typeOffset = CalculateTypeOffset(codeItem);
             int constantOffset = CalculateConstantOffset(codeItem);
-            int staticOffset = CalculateStaticOffset(codeItem);
             int readOnlyOffset = CalculateReadOnlyOffset(codeItem);
 
-            int calc = typeOffset * 1000 + constantOffset * 100 + staticOffset * 10 + readOnlyOffset;
+            int calc = typeOffset * 100 + constantOffset * 10 + readOnlyOffset;
 
             return calc;
         }
@@ -74,6 +73,7 @@ namespace PinnacleCodingConvention.Helpers
                 KindCodeItem.Field,
                 KindCodeItem.Constructor,
                 KindCodeItem.Method,
+                KindCodeItem.TestMethod,
                 KindCodeItem.Property
             };
             return itemsOrder.IndexOf(codeItem.Kind) + 1;
@@ -86,15 +86,6 @@ namespace PinnacleCodingConvention.Helpers
                 return 0;
 
             return codeItemField.IsConstant ? 0 : 1;
-        }
-
-        private static int CalculateStaticOffset(BaseCodeItem codeItem)
-        {
-            var codeItemElement = codeItem as BaseCodeItemElement;
-            if (codeItemElement == null) 
-                return 0;
-
-            return codeItemElement.IsStatic ? 0 : 1;
         }
 
         private static int CalculateReadOnlyOffset(BaseCodeItem codeItem)
