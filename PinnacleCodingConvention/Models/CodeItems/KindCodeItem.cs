@@ -41,6 +41,9 @@ namespace PinnacleCodingConvention.Models.CodeItems
         [Description("Methods")]
         Method,
 
+        [Description("TestMethods")]
+        TestMethod,
+
         [Description("Structs")]
         Struct,
 

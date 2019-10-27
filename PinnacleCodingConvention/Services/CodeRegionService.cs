@@ -33,7 +33,7 @@ namespace PinnacleCodingConvention.Services
         public IEnumerable<BaseCodeItem> AddRequiredRegions(IEnumerable<BaseCodeItem> codeItems)
         {
             // Regions to each Method
-            AddRegionsToCodeItems(codeItems.Where(item => item.Kind == KindCodeItem.Method));
+            AddRegionsToCodeItems(codeItems.Where(item => item.Kind == KindCodeItem.Method || item.Kind == KindCodeItem.TestMethod));
             // Regions to each Property
             AddRegionsToCodeItems(codeItems.Where(item => item.Kind == KindCodeItem.Property && item.StartLine != item.EndLine));
             // Region to Class Variables
@@ -44,6 +44,8 @@ namespace PinnacleCodingConvention.Services
             AddBlockRegion(codeItems, KindCodeItem.Method, Resource.MethodsRegion);
             // Region to Properties
             AddBlockRegion(codeItems, KindCodeItem.Property, Resource.PropertiesRegion);
+            // Region to Test Methods
+            AddBlockRegion(codeItems, KindCodeItem.TestMethod, Resource.TestsRegion);
             // Region to Classes
             AddClassRegions(codeItems);
 

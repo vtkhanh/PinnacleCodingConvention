@@ -15,6 +15,7 @@ namespace PinnacleCodingConvention.Models.CodeItems
         private readonly Lazy<int> _complexity;
         private readonly Lazy<bool> _isConstructor;
         private readonly Lazy<bool> _isDestructor;
+        private readonly Lazy<bool> _isTestMethod;
         private readonly Lazy<bool> _isExplicitInterfaceImplementation;
         private readonly Lazy<vsCMOverrideKind> _overrideKind;
         private readonly Lazy<IEnumerable<CodeParameter>> _parameters;
@@ -47,6 +48,8 @@ namespace PinnacleCodingConvention.Models.CodeItems
             _parameters = LazyTryDefault(() => CodeFunction?.Parameters?.Cast<CodeParameter>().ToList() ?? Enumerable.Empty<CodeParameter>());
 
             _TypeString = LazyTryDefault(() => CodeFunction?.Type?.AsString);
+
+            _isTestMethod = LazyTryDefault(() => Attributes.OfType<CodeAttribute>().Any(attribute => attribute.Name == "TestMethod"));
         }
 
         /// <summary>
@@ -57,10 +60,19 @@ namespace PinnacleCodingConvention.Models.CodeItems
             get
             {
                 if (IsConstructor)
+                {
                     return KindCodeItem.Constructor;
+                }
 
                 if (IsDestructor)
+                {
                     return KindCodeItem.Destructor;
+                }
+
+                if (IsTestMethod)
+                {
+                    return KindCodeItem.TestMethod;
+                }
 
                 return KindCodeItem.Method;
             }
@@ -99,6 +111,11 @@ namespace PinnacleCodingConvention.Models.CodeItems
         /// Gets a flag indicating if this method is a destructor.
         /// </summary>
         public bool IsDestructor => _isDestructor.Value;
+
+        /// <summary>
+        /// Gets a flag indicating if this method is a test method.
+        /// </summary>
+        public bool IsTestMethod => _isTestMethod.Value;
 
         /// <summary>
         /// Gets a flag indicating if this method is an explicit interface implementation.

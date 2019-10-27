@@ -151,6 +151,15 @@ namespace PinnacleCodingConvention.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Tests....
+        /// </summary>
+        internal static string TestsRegion {
+            get {
+                return ResourceManager.GetString("TestsRegion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Warning.
         /// </summary>
         internal static string Warning {

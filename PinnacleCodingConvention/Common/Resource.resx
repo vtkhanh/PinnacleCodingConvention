@@ -147,6 +147,9 @@
   <data name="Stopped" xml:space="preserve">
     <value>Stopped</value>
   </data>
+  <data name="TestsRegion" xml:space="preserve">
+    <value>Tests...</value>
+  </data>
   <data name="Warning" xml:space="preserve">
     <value>Warning</value>
   </data>

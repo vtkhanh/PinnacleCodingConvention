@@ -73,6 +73,7 @@ namespace PinnacleCodingConvention.Helpers
                 KindCodeItem.Field,
                 KindCodeItem.Constructor,
                 KindCodeItem.Method,
+                KindCodeItem.TestMethod,
                 KindCodeItem.Property
             };
             return itemsOrder.IndexOf(codeItem.Kind) + 1;
