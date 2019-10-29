@@ -30,13 +30,16 @@ namespace PinnacleCodingConvention.Services
             return codeItems.Where(codeItem => codeItem.Kind != KindCodeItem.Region);
         }
 
-        public IEnumerable<BaseCodeItem> AddRequiredRegions(IEnumerable<BaseCodeItem> codeItems)
+        public IEnumerable<BaseCodeItem> AddRequiredRegions(IEnumerable<BaseCodeItem> codeItems, ICodeItemParent parent = null)
         {
-            // Regions to each Method
-            AddRegionsToCodeItems(codeItems.Where(item => item.Kind == KindCodeItem.Method || item.Kind == KindCodeItem.TestMethod));
-            // Regions to each Property
-            AddRegionsToCodeItems(codeItems.Where(item => item.Kind == KindCodeItem.Property && item.StartLine != item.EndLine));
-            // Region to Class Variables
+            if (parent is null || parent.Kind != KindCodeItem.Interface)
+            {
+                // Regions to each Method
+                AddRegionsToCodeItems(codeItems.Where(item => item.Kind == KindCodeItem.Method || item.Kind == KindCodeItem.TestMethod));
+                // Regions to each Property
+                AddRegionsToCodeItems(codeItems.Where(item => item.Kind == KindCodeItem.Property && item.StartLine != item.EndLine));
+            }
+            //Region to Class Variables
             AddBlockRegion(codeItems, KindCodeItem.Field, Resource.ClassVariablesRegion);
             // Region to Constructors
             AddBlockRegion(codeItems, KindCodeItem.Constructor, Resource.ConstructorsRegion);
@@ -51,9 +54,9 @@ namespace PinnacleCodingConvention.Services
 
             foreach (var item in codeItems)
             {
-                if (item is ICodeItemParent parent && parent.Children.Any())
+                if (item is ICodeItemParent codeItemParent && codeItemParent.Children.Any())
                 {
-                    AddRequiredRegions(parent.Children);
+                    AddRequiredRegions(codeItemParent.Children, codeItemParent);
                 }
             }
 
@@ -62,12 +65,14 @@ namespace PinnacleCodingConvention.Services
 
         private void AddClassRegions(IEnumerable<BaseCodeItem> codeItems)
         {
-            var codeItemClasses = codeItems.Where(item => item.Kind == KindCodeItem.Class);
+            var codeItemClasses = codeItems.Where(item => HasClassRegion(item.Kind));
             foreach (var codeItemClass in codeItemClasses)
             {
                 InsertRegionTag($": {codeItemClass.Name} :", codeItemClass.StartPoint);
                 InsertEndRegionTag(codeItemClass.EndPoint);
             }
+
+            bool HasClassRegion(KindCodeItem kind) => kind == KindCodeItem.Class || kind == KindCodeItem.Struct || kind == KindCodeItem.Interface;
         }
 
         private void AddBlockRegion(IEnumerable<BaseCodeItem> codeItems, KindCodeItem kind, string regionName)
@@ -133,10 +138,10 @@ namespace PinnacleCodingConvention.Services
 
             cursor.Insert($"{RegionHelper.GetRegionTagText(cursor, regionName)}{Environment.NewLine}");
 
-            startPoint.SmartFormat(cursor);
-
             cursor.LineUp();
             cursor.StartOfLine();
+
+            startPoint.SmartFormat(cursor);
 
             return cursor;
         }
@@ -154,13 +159,13 @@ namespace PinnacleCodingConvention.Services
 
             cursor.Insert($"{RegionHelper.GetEndRegionTagText(cursor)}");
 
-            endPoint.SmartFormat(cursor);
-
             // Insert new line if next line is not a blank line
             if (cursor.GetLines(cursor.Line + 1, cursor.Line + 2).Any(character => !char.IsWhiteSpace(character)))
             {
                 cursor.Insert(Environment.NewLine);
             }
+
+            endPoint.SmartFormat(cursor);
 
             return cursor;
         }
