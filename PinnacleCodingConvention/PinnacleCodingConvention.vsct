@@ -57,11 +57,12 @@
         <Parent guid="PinnacleCodingConventionPackageCmdSet" id="EditorContextMenuGroup" />
         <Icon guid="Icon" id="commandIcon1" />
         <Strings>
-          <ButtonText>Pinnacle coding convention cleanup</ButtonText>
+          <ButtonText>Pinnacle Coding Convention Cleanup</ButtonText>
         </Strings>
       </Button>
     </Buttons>
 
+    
     <!--The bitmaps section is used to define the bitmaps that are used for the commands.-->
     <Bitmaps>
       <!--  The bitmap id is defined in a way that is a little bit different from the others:
@@ -72,6 +73,12 @@
       <Bitmap guid="Icon" href="Resources\Icon-16x16.png" usedList="commandIcon1"/>
     </Bitmaps>
   </Commands>
+  
+  <KeyBindings>
+    <KeyBinding guid="PinnacleCodingConventionPackageCmdSet" id="CleanUpCommandId" editor="guidVSStd97"
+                mod1="Control" key1="M"
+                mod2="Control" key2="D"/>
+  </KeyBindings>
 
   <Symbols>
     <!-- This is the package guid. -->
