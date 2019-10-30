@@ -159,13 +159,15 @@ namespace PinnacleCodingConvention.Services
 
             cursor.Insert($"{RegionHelper.GetEndRegionTagText(cursor)}");
 
+            endPoint.SmartFormat(cursor);
+
             // Insert new line if next line is not a blank line
             if (cursor.GetLines(cursor.Line + 1, cursor.Line + 2).Any(character => !char.IsWhiteSpace(character)))
             {
                 cursor.Insert(Environment.NewLine);
+                cursor.LineUp();
+                cursor.EndOfLine();
             }
-
-            endPoint.SmartFormat(cursor);
 
             return cursor;
         }

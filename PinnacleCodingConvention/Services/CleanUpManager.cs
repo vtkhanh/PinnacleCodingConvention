@@ -38,8 +38,10 @@ namespace PinnacleCodingConvention.Services
                 codeItems = _codeRegionService.CleanupExistingRegions(codeItems);
                 codeItems = _codeTreeBuilder.Build(codeItems);
                 codeItems = _codeItemReorganizer.Reorganize(codeItems);
-                codeItems = _codeRegionService.AddRequiredRegions(codeItems); 
+                codeItems = _codeRegionService.AddRequiredRegions(codeItems);
+#if DEBUG
                 OutputWindowHelper.PrintCodeItems(codeItems);
+#endif
             });
         }
     }
