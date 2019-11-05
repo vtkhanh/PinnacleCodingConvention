@@ -11,11 +11,9 @@ namespace PinnacleCodingConvention.Services
     internal class CodeRegionService
     {
         private static CodeRegionService _instance;
-        private BlankLineInsertService _blankLineInsertService;
 
         private CodeRegionService() 
         {
-            _blankLineInsertService = BlankLineInsertService.GetInstance();
         }
 
         public static CodeRegionService GetInstance() => _instance ?? (_instance = new CodeRegionService());
@@ -67,12 +65,6 @@ namespace PinnacleCodingConvention.Services
                     AddRequiredRegions(codeItemParent.Children, codeItemParent);
                 }
             }
-        }
-
-        public void InsertBlankLines(IEnumerable<CodeItemRegion> codeItemRegions)
-        {
-            _blankLineInsertService.InsertPaddingBeforeRegionTags(codeItemRegions);
-            _blankLineInsertService.InsertPaddingAfterEndRegionTags(codeItemRegions);
         }
 
         private void AddClassRegions(IEnumerable<BaseCodeItem> codeItems)
@@ -187,15 +179,11 @@ namespace PinnacleCodingConvention.Services
             end.StartOfLine();
             end.Delete(end.LineLength);
             end.DeleteWhitespace(vsWhitespaceOptions.vsWhitespaceOptionsVertical);
-            end.Insert(Environment.NewLine);
 
             var start = region.StartPoint.CreateEditPoint();
             start.StartOfLine();
             start.Delete(start.LineLength);
             start.DeleteWhitespace(vsWhitespaceOptions.vsWhitespaceOptionsVertical);
-            start.Insert(Environment.NewLine);
-
-            region.IsInvalidated = true;
         }
     }
 }
