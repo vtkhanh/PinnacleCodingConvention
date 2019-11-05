@@ -12,6 +12,8 @@ namespace PinnacleCodingConvention.Models.CodeItems
     /// </summary>
     internal class CodeItemMethod : BaseCodeItemElement, ICodeItemComplexity, ICodeItemParameters, IInterfaceItem
     {
+        private readonly string[] TestMethodAttributes = { "TestMethod", "DataTestMethod" };
+
         private readonly Lazy<int> _complexity;
         private readonly Lazy<bool> _isConstructor;
         private readonly Lazy<bool> _isDestructor;
@@ -49,7 +51,7 @@ namespace PinnacleCodingConvention.Models.CodeItems
 
             _TypeString = LazyTryDefault(() => CodeFunction?.Type?.AsString);
 
-            _isTestMethod = LazyTryDefault(() => Attributes.OfType<CodeAttribute>().Any(attribute => attribute.Name == "TestMethod"));
+            _isTestMethod = LazyTryDefault(() => Attributes.OfType<CodeAttribute>().Any(attribute => TestMethodAttributes.Contains(attribute.Name)));
         }
 
         /// <summary>

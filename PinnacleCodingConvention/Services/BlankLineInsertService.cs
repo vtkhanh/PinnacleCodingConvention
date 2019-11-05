@@ -1,8 +1,6 @@
-﻿using EnvDTE;
-using PinnacleCodingConvention.Helpers;
+﻿using PinnacleCodingConvention.Helpers;
 using PinnacleCodingConvention.Models.CodeItems;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace PinnacleCodingConvention.Services
 {
@@ -65,72 +63,28 @@ namespace PinnacleCodingConvention.Services
         }
 
         /// <summary>
-        /// Inserts a blank line before #region tags except where adjacent to a brace.
+        /// Inserts blank lines before and after elements except where adjacent to a brace
         /// </summary>
-        /// <param name="regions">The regions to pad.</param>
-        internal void InsertPaddingBeforeRegionTags(IEnumerable<CodeItemRegion> regions)
+        /// <typeparam name="T"></typeparam>
+        /// <param name="codeItems">code items to pad</param>
+        internal void InsertPaddingBeforeAndAfter<T>(IEnumerable<T> codeItems)
+            where T : BaseCodeItem
         {
-            foreach (var region in regions.Where(x => !x.IsInvalidated))
-            {
-                var startPoint = region.StartPoint.CreateEditPoint();
-
-                TextDocumentHelper.InsertBlankLineBeforePoint(startPoint);
-            }
-        }
-
-        /// <summary>
-        /// Inserts a blank line after #region tags except where adjacent to a brace.
-        /// </summary>
-        /// <param name="regions">The regions to pad.</param>
-        internal void InsertPaddingAfterRegionTags(IEnumerable<CodeItemRegion> regions)
-        {
-            foreach (var region in regions.Where(x => !x.IsInvalidated))
-            {
-                var startPoint = region.StartPoint.CreateEditPoint();
-
-                TextDocumentHelper.InsertBlankLineAfterPoint(startPoint);
-            }
-        }
-
-        /// <summary>
-        /// Inserts a blank line before #endregion tags except where adjacent to a brace.
-        /// </summary>
-        /// <param name="regions">The regions to pad.</param>
-        internal void InsertPaddingBeforeEndRegionTags(IEnumerable<CodeItemRegion> regions)
-        {
-            foreach (var region in regions.Where(x => !x.IsInvalidated))
-            {
-                var endPoint = region.EndPoint.CreateEditPoint();
-
-                TextDocumentHelper.InsertBlankLineBeforePoint(endPoint);
-            }
-        }
-
-        /// <summary>
-        /// Inserts a blank line after #endregion tags except where adjacent to a brace.
-        /// </summary>
-        /// <param name="regions">The regions to pad.</param>
-        internal void InsertPaddingAfterEndRegionTags(IEnumerable<CodeItemRegion> regions)
-        {
-            foreach (var region in regions.Where(x => !x.IsInvalidated))
-            {
-                var endPoint = region.EndPoint.CreateEditPoint();
-
-                TextDocumentHelper.InsertBlankLineAfterPoint(endPoint);
-            }
+            InsertPaddingBeforeCodeElements(codeItems);
+            InsertPaddingAfterCodeElements(codeItems);
         }
 
         /// <summary>
         /// Inserts a blank line before the specified code elements except where adjacent to a brace.
         /// </summary>
         /// <typeparam name="T">The type of the code element.</typeparam>
-        /// <param name="codeElements">The code elements to pad.</param>
-        internal void InsertPaddingBeforeCodeElements<T>(IEnumerable<T> codeElements)
-            where T : BaseCodeItemElement
+        /// <param name="codeItems">The code elements to pad.</param>
+        internal void InsertPaddingBeforeCodeElements<T>(IEnumerable<T> codeItems)
+            where T : BaseCodeItem
         {
-            foreach (T codeElement in codeElements.Where(ShouldBePrecededByBlankLine))
+            foreach (T codeItem in codeItems)
             {
-                TextDocumentHelper.InsertBlankLineBeforePoint(codeElement.StartPoint);
+                TextDocumentHelper.InsertBlankLineBeforePoint(codeItem.StartPoint);
             }
         }
 
@@ -138,33 +92,13 @@ namespace PinnacleCodingConvention.Services
         /// Inserts a blank line after the specified code elements except where adjacent to a brace.
         /// </summary>
         /// <typeparam name="T">The type of the code element.</typeparam>
-        /// <param name="codeElements">The code elements to pad.</param>
-        internal void InsertPaddingAfterCodeElements<T>(IEnumerable<T> codeElements)
-            where T : BaseCodeItemElement
+        /// <param name="codeItems">The code elements to pad.</param>
+        internal void InsertPaddingAfterCodeElements<T>(IEnumerable<T> codeItems)
+            where T : BaseCodeItem
         {
-            foreach (T codeElement in codeElements.Where(ShouldBeFollowedByBlankLine))
+            foreach (T codeItem in codeItems)
             {
-                TextDocumentHelper.InsertBlankLineAfterPoint(codeElement.EndPoint);
-            }
-        }
-
-        /// <summary>
-        /// Inserts a blank line between multi-line property accessors.
-        /// </summary>
-        /// <param name="properties">The properties.</param>
-        internal void InsertPaddingBetweenMultiLinePropertyAccessors(IEnumerable<CodeItemProperty> properties)
-        {
-            foreach (var property in properties)
-            {
-                var getter = property.CodeProperty.Getter;
-                var setter = property.CodeProperty.Setter;
-
-                if (getter != null && setter != null && (getter.StartPoint.Line < getter.EndPoint.Line ||
-                                                         setter.StartPoint.Line < setter.EndPoint.Line))
-                {
-                    EditPoint insertingPoint = setter.EndPoint.Line > getter.EndPoint.Line ? getter.EndPoint.CreateEditPoint() : setter.EndPoint.CreateEditPoint();
-                    TextDocumentHelper.InsertBlankLineAfterPoint(insertingPoint);
-                }
+                TextDocumentHelper.InsertBlankLineAfterPoint(codeItem.EndPoint);
             }
         }
     }
