@@ -120,6 +120,9 @@
   <data name="ClassVariablesRegion" xml:space="preserve">
     <value>Class Variable(s)...</value>
   </data>
+  <data name="ConstantsRegion" xml:space="preserve">
+    <value>Constant(s)...</value>
+  </data>
   <data name="ConstructorsRegion" xml:space="preserve">
     <value>Constructor(s)...</value>
   </data>
