@@ -12,7 +12,9 @@ namespace PinnacleCodingConvention.Services
     {
         private static CodeRegionService _instance;
 
-        private CodeRegionService() { }
+        private CodeRegionService() 
+        {
+        }
 
         public static CodeRegionService GetInstance() => _instance ?? (_instance = new CodeRegionService());
 
@@ -30,17 +32,18 @@ namespace PinnacleCodingConvention.Services
             return codeItems.Where(codeItem => codeItem.Kind != KindCodeItem.Region);
         }
 
-        public IEnumerable<BaseCodeItem> AddRequiredRegions(IEnumerable<BaseCodeItem> codeItems, ICodeItemParent parent = null)
+        public void AddRequiredRegions(IEnumerable<BaseCodeItem> codeItems, ICodeItemParent parent)
         {
-            if (parent is null || parent.Kind != KindCodeItem.Interface)
+            if (parent.Kind != KindCodeItem.Interface)
             {
-                // Regions to each Method
-                AddRegionsToCodeItems(codeItems.Where(item => item.Kind == KindCodeItem.Method || item.Kind == KindCodeItem.TestMethod));
-                // Regions to each Property
-                AddRegionsToCodeItems(codeItems.Where(item => item.Kind == KindCodeItem.Property && item.StartLine != item.EndLine));
+                // Regions to each Method, Test Method, or Property
+                AddRegionsToCodeItems(codeItems);
             }
-            //Region to Class Variables
-            AddBlockRegion(codeItems, KindCodeItem.Field, Resource.ClassVariablesRegion);
+            if (parent.Kind == KindCodeItem.Class || parent.Kind == KindCodeItem.Struct)
+            {
+                //Region to Class Variables
+                AddBlockRegion(codeItems, KindCodeItem.Field, Resource.ClassVariablesRegion);
+            }
             // Region to Constructors
             AddBlockRegion(codeItems, KindCodeItem.Constructor, Resource.ConstructorsRegion);
             // Region to Methods
@@ -50,7 +53,10 @@ namespace PinnacleCodingConvention.Services
             // Region to Test Methods
             AddBlockRegion(codeItems, KindCodeItem.TestMethod, Resource.TestsRegion);
             // Region to Classes
-            AddClassRegions(codeItems);
+            if (parent.Kind == KindCodeItem.Namespace)
+            {
+                AddClassRegions(codeItems);
+            }
 
             foreach (var item in codeItems)
             {
@@ -59,20 +65,16 @@ namespace PinnacleCodingConvention.Services
                     AddRequiredRegions(codeItemParent.Children, codeItemParent);
                 }
             }
-
-            return codeItems;
         }
 
         private void AddClassRegions(IEnumerable<BaseCodeItem> codeItems)
         {
-            var codeItemClasses = codeItems.Where(item => HasClassRegion(item.Kind));
-            foreach (var codeItemClass in codeItemClasses)
+            foreach (var codeItem in codeItems)
             {
-                InsertRegionTag($": {codeItemClass.Name} :", codeItemClass.StartPoint);
-                InsertEndRegionTag(codeItemClass.EndPoint);
+                var regionName = $": {codeItem.Name} :";
+                InsertRegionTag(regionName, codeItem.StartPoint);
+                InsertEndRegionTag(codeItem.EndPoint);
             }
-
-            bool HasClassRegion(KindCodeItem kind) => kind == KindCodeItem.Class || kind == KindCodeItem.Struct || kind == KindCodeItem.Interface;
         }
 
         private void AddBlockRegion(IEnumerable<BaseCodeItem> codeItems, KindCodeItem kind, string regionName)
@@ -83,13 +85,15 @@ namespace PinnacleCodingConvention.Services
                 return;
             }
 
-            InsertRegionTag(regionName, codeItemsByKind.First().StartPoint);
-            InsertEndRegionTag(codeItemsByKind.Last().EndPoint);
+            var firstItem = codeItemsByKind.First();
+            var lastItem = codeItemsByKind.Last();
+            InsertRegionTag(regionName, firstItem.StartPoint);
+            InsertEndRegionTag(lastItem.EndPoint);
         }
 
         private void AddRegionsToCodeItems(IEnumerable<BaseCodeItem> codeItems)
         {
-            var groups = codeItems.GroupBy(item => item.Name);
+            var groups = codeItems.Where(HasItemRegion).GroupBy(item => item.Name);
             foreach (var group in groups)
             {
                 foreach (var codeItem in group)
@@ -111,10 +115,16 @@ namespace PinnacleCodingConvention.Services
                 if (group.Count() > 1)
                 {
                     var sortedItems = group.ToList().OrderBy(item => item.StartPoint.Line);
-                    InsertRegionTag($"{group.Key}...", sortedItems.First().StartPoint);
+                    var regionName = $"{group.Key}...";
+                    InsertRegionTag(regionName, sortedItems.First().StartPoint);
                     InsertEndRegionTag(sortedItems.Last().EndPoint);
                 }
             }
+
+            bool HasItemRegion(BaseCodeItem codeItem) => 
+                codeItem.Kind == KindCodeItem.Method
+                || codeItem.Kind == KindCodeItem.TestMethod
+                || (codeItem.Kind == KindCodeItem.Property && codeItem.StartLine != codeItem.EndLine);
         }
 
         private static string GetParameterText(CodeParameter param) => $"{param.GetStartPoint().CreateEditPoint().GetText(param.GetEndPoint())}";
@@ -126,12 +136,6 @@ namespace PinnacleCodingConvention.Services
             // If the cursor is not preceeded only by whitespace, insert a new line.
             var firstNonWhitespaceIndex = cursor.GetLine().TakeWhile(char.IsWhiteSpace).Count();
             if (cursor.DisplayColumn > firstNonWhitespaceIndex + 1)
-            {
-                cursor.Insert(Environment.NewLine);
-            }
-
-            // Insert new line if previous line is not a blank line
-            if (cursor.GetLines(cursor.Line - 1, cursor.Line).Any(character => !char.IsWhiteSpace(character)))
             {
                 cursor.Insert(Environment.NewLine);
             }
@@ -161,20 +165,12 @@ namespace PinnacleCodingConvention.Services
 
             endPoint.SmartFormat(cursor);
 
-            // Insert new line if next line is not a blank line
-            if (cursor.GetLines(cursor.Line + 1, cursor.Line + 2).Any(character => !char.IsWhiteSpace(character)))
-            {
-                cursor.Insert(Environment.NewLine);
-                cursor.LineUp();
-                cursor.EndOfLine();
-            }
-
             return cursor;
         }
 
         private void RemoveRegion(CodeItemRegion region)
         {
-            if (region is null || region.IsInvalidated || region.IsPseudoGroup || region.StartLine <= 0 || region.EndLine <= 0)
+            if (region is null)
             {
                 return;
             }
@@ -183,15 +179,11 @@ namespace PinnacleCodingConvention.Services
             end.StartOfLine();
             end.Delete(end.LineLength);
             end.DeleteWhitespace(vsWhitespaceOptions.vsWhitespaceOptionsVertical);
-            end.Insert(Environment.NewLine);
 
             var start = region.StartPoint.CreateEditPoint();
             start.StartOfLine();
             start.Delete(start.LineLength);
             start.DeleteWhitespace(vsWhitespaceOptions.vsWhitespaceOptionsVertical);
-            start.Insert(Environment.NewLine);
-
-            region.IsInvalidated = true;
         }
     }
 }

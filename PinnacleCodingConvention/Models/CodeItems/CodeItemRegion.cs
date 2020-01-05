@@ -92,15 +92,5 @@ namespace PinnacleCodingConvention.Models.CodeItems
                 return string.IsNullOrWhiteSpace(text);
             }
         }
-
-        /// <summary>
-        /// Gets or sets a flag indicating if this region has been invalidated.
-        /// </summary>
-        public bool IsInvalidated { get; set; }
-
-        /// <summary>
-        /// Gets or sets a flag indicating if this is a pseudo group.
-        /// </summary>
-        public bool IsPseudoGroup { get; set; }
     }
 }

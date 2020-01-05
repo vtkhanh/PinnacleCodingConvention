@@ -13,6 +13,7 @@ namespace PinnacleCodingConvention.Services
         private readonly CodeItemReorganizer _codeItemReorganizer;
         private readonly CodeTreeBuilder _codeTreeBuilder;
         private readonly CodeRegionService _codeRegionService;
+        private readonly BlankLineInsertService _blankLineInsertService;
 
         private static CleanUpManager _instance;
 
@@ -24,6 +25,7 @@ namespace PinnacleCodingConvention.Services
             _codeItemReorganizer = CodeItemReorganizer.GetInstance();
             _codeTreeBuilder = CodeTreeBuilder.GetInstance();
             _codeRegionService = CodeRegionService.GetInstance();
+            _blankLineInsertService = BlankLineInsertService.GetInstance();
         }
 
         internal static CleanUpManager GetInstance(PinnacleCodingConventionPackage package) => _instance ?? (_instance = new CleanUpManager(package));
@@ -38,7 +40,12 @@ namespace PinnacleCodingConvention.Services
                 codeItems = _codeRegionService.CleanupExistingRegions(codeItems);
                 codeItems = _codeTreeBuilder.Build(codeItems);
                 codeItems = _codeItemReorganizer.Reorganize(codeItems);
-                codeItems = _codeRegionService.AddRequiredRegions(codeItems);
+
+                var codeItemNamespace = codeItems.First(item => item is CodeItemNamespace) as ICodeItemParent;
+                _codeRegionService.AddRequiredRegions(codeItemNamespace.Children, codeItemNamespace);
+                codeItems = _codeItemRetriever.Retrieve(document);
+                _blankLineInsertService.InsertPaddingBeforeAndAfter(codeItems.Where(item => item is CodeItemRegion || item is CodeItemNamespace));
+
 #if DEBUG
                 OutputWindowHelper.PrintCodeItems(codeItems);
 #endif
