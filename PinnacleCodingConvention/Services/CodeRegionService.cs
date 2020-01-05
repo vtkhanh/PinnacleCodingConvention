@@ -39,8 +39,12 @@ namespace PinnacleCodingConvention.Services
                 // Regions to each Method, Test Method, or Property
                 AddRegionsToCodeItems(codeItems);
             }
+            // Need this check in order to not add Class Variables region to Enum
             if (parent.Kind == KindCodeItem.Class || parent.Kind == KindCodeItem.Struct)
             {
+                //Region to Constants
+                AddBlockRegion(codeItems, KindCodeItem.Constants, Resource.ConstantsRegion);
+
                 //Region to Class Variables
                 AddBlockRegion(codeItems, KindCodeItem.Field, Resource.ClassVariablesRegion);
             }

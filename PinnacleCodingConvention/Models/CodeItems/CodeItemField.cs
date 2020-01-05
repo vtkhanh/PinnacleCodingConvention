@@ -1,5 +1,6 @@
 using EnvDTE;
 using EnvDTE80;
+using PinnacleCodingConvention.Options;
 using System;
 
 namespace PinnacleCodingConvention.Models.CodeItems
@@ -38,7 +39,7 @@ namespace PinnacleCodingConvention.Models.CodeItems
         /// <summary>
         /// Gets the kind.
         /// </summary>
-        public override KindCodeItem Kind => KindCodeItem.Field;
+        public override KindCodeItem Kind => GeneralOptions.Instance.IsSeparateConstAndVar && IsConstant ? KindCodeItem.Constants : KindCodeItem.Field;
 
         /// <summary>
         /// Loads all lazy initialized values immediately.
