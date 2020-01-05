@@ -70,6 +70,7 @@ namespace PinnacleCodingConvention.Helpers
         {
             var itemsOrder = new List<KindCodeItem>
             {
+                KindCodeItem.Constants,
                 KindCodeItem.Field,
                 KindCodeItem.Constructor,
                 KindCodeItem.Method,
