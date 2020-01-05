@@ -4,7 +4,7 @@ using System.Threading;
 using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
-using PinnacleCodingConvention.Common;
+using PinnacleCodingConvention.Options;
 using Task = System.Threading.Tasks.Task;
 
 namespace PinnacleCodingConvention
@@ -29,6 +29,7 @@ namespace PinnacleCodingConvention
     [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
     [Guid(PackageGuids.PinnacleCodingConventionPackageString)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
+    [ProvideOptionPage(typeof(DialogPageProvider.General), "Pinnacle Coding Convention", "General", 0, 0, true)]
     public sealed class PinnacleCodingConventionPackage : AsyncPackage
     {
 

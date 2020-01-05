@@ -70,6 +70,15 @@ namespace PinnacleCodingConvention.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Constant(s)....
+        /// </summary>
+        internal static string ConstantsRegion {
+            get {
+                return ResourceManager.GetString("ConstantsRegion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Constructor(s)....
         /// </summary>
         internal static string ConstructorsRegion {

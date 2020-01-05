@@ -1,5 +1,5 @@
-﻿using EnvDTE;
-using PinnacleCodingConvention.Models.CodeItems;
+﻿using PinnacleCodingConvention.Models.CodeItems;
+using PinnacleCodingConvention.Options;
 using System.Collections.Generic;
 
 namespace PinnacleCodingConvention.Helpers
@@ -12,7 +12,7 @@ namespace PinnacleCodingConvention.Helpers
         private readonly bool _secondaryOrderByName;
 
         internal CodeItemTypeComparer() : this(true) { }
-        
+
         /// <summary>
         /// Initializes a new instance of the <see cref="CodeItemTypeComparer"/> class.
         /// </summary>
@@ -68,8 +68,9 @@ namespace PinnacleCodingConvention.Helpers
 
         private static int CalculateTypeOffset(BaseCodeItem codeItem)
         {
-            var itemsOrder = new List<KindCodeItem> 
+            var itemsOrder = new List<KindCodeItem>
             {
+                KindCodeItem.Constants,
                 KindCodeItem.Field,
                 KindCodeItem.Constructor,
                 KindCodeItem.Method,
@@ -82,7 +83,7 @@ namespace PinnacleCodingConvention.Helpers
         private static int CalculateConstantOffset(BaseCodeItem codeItem)
         {
             var codeItemField = codeItem as CodeItemField;
-            if (codeItemField == null) 
+            if (codeItemField == null)
                 return 0;
 
             return codeItemField.IsConstant ? 0 : 1;
@@ -91,7 +92,7 @@ namespace PinnacleCodingConvention.Helpers
         private static int CalculateReadOnlyOffset(BaseCodeItem codeItem)
         {
             var codeItemField = codeItem as CodeItemField;
-            if (codeItemField == null) 
+            if (codeItemField == null || !GeneralOptions.Instance.OrderByAccessLevelFirst)
                 return 0;
 
             return codeItemField.IsReadOnly ? 0 : 1;
