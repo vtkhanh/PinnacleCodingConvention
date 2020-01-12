@@ -11,20 +11,21 @@ pool:
 
 variables:
   # patch will be incremented at each build. This is useful to create a unique build version.
-  patch: $[counter('VersionCounter', 0)]
+  patch: $[counter(variables['Build.Reason'], 0)]
+  version: $[format('1.1.{0}', variables['patch'])]
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
 
-name: 1.0.$(patch) # Set the value of $(Build.BuildNumber)
+name: $(Build.Reason)-$(version)
 
 steps:
 - task: PowerShell@2
   displayName: Update version in the vsix manifest
   inputs:
     filePath: 'Build\update-version.ps1'
-    arguments: '$(Build.BuildNumber)'
+    arguments: '$(version)'
     pwsh: true
 
 - task: NuGetCommand@2

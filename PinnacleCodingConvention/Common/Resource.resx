@@ -126,6 +126,9 @@
   <data name="ConstructorsRegion" xml:space="preserve">
     <value>Constructor(s)...</value>
   </data>
+  <data name="DestructorRegion" xml:space="preserve">
+    <value>Destructor</value>
+  </data>
   <data name="Error" xml:space="preserve">
     <value>Error</value>
   </data>

@@ -12,7 +12,7 @@ namespace PinnacleCodingConvention.Services
     {
         private static CodeRegionService _instance;
 
-        private CodeRegionService() 
+        private CodeRegionService()
         {
         }
 
@@ -50,6 +50,8 @@ namespace PinnacleCodingConvention.Services
             }
             // Region to Constructors
             AddBlockRegion(codeItems, KindCodeItem.Constructor, Resource.ConstructorsRegion);
+            // Region to Desctructor
+            AddBlockRegion(codeItems, KindCodeItem.Destructor, Resource.DestructorRegion);
             // Region to Methods
             AddBlockRegion(codeItems, KindCodeItem.Method, Resource.MethodsRegion);
             // Region to Properties
@@ -97,22 +99,25 @@ namespace PinnacleCodingConvention.Services
 
         private void AddRegionsToCodeItems(IEnumerable<BaseCodeItem> codeItems)
         {
-            var groups = codeItems.Where(HasItemRegion).GroupBy(item => item.Name);
+            var groups = codeItems.Where(CanHaveRegion).GroupBy(item => item.Name);
             foreach (var group in groups)
             {
                 foreach (var codeItem in group)
                 {
-                    var regionName = group.Count() > 1 && codeItem is CodeItemMethod codeItemMethod
-                        ? $"{group.Key}({string.Join(", ", codeItemMethod.Parameters.Select(GetParameterText))})"
-                        : group.Key;
-                    var regionStartPoint = InsertRegionTag(regionName, codeItem.StartPoint);
-                    var regionEndPoint = InsertEndRegionTag(codeItem.EndPoint);
-                    codeItem.AssociatedCodeRegion = new CodeItemRegion
+                    if (codeItem.StartLine != codeItem.EndLine)
                     {
-                        Name = regionName,
-                        StartPoint = regionStartPoint,
-                        EndPoint = regionEndPoint
-                    };
+                        var regionName = group.Count() > 1 && codeItem is CodeItemMethod codeItemMethod
+                            ? $"{group.Key}({string.Join(", ", codeItemMethod.Parameters.Select(GetParameterText))})"
+                            : group.Key;
+                        var regionStartPoint = InsertRegionTag(regionName, codeItem.StartPoint);
+                        var regionEndPoint = InsertEndRegionTag(codeItem.EndPoint);
+                        codeItem.AssociatedCodeRegion = new CodeItemRegion
+                        {
+                            Name = regionName,
+                            StartPoint = regionStartPoint,
+                            EndPoint = regionEndPoint
+                        };
+                    }
                 }
 
                 // Add Block region (eg: for overloading methods)
@@ -125,10 +130,8 @@ namespace PinnacleCodingConvention.Services
                 }
             }
 
-            bool HasItemRegion(BaseCodeItem codeItem) => 
-                codeItem.Kind == KindCodeItem.Method
-                || codeItem.Kind == KindCodeItem.TestMethod
-                || (codeItem.Kind == KindCodeItem.Property && codeItem.StartLine != codeItem.EndLine);
+            bool CanHaveRegion(BaseCodeItem codeItem) =>
+                codeItem.Kind == KindCodeItem.Method || codeItem.Kind == KindCodeItem.TestMethod || codeItem.Kind == KindCodeItem.Property;
         }
 
         private static string GetParameterText(CodeParameter param) => $"{param.GetStartPoint().CreateEditPoint().GetText(param.GetEndPoint())}";

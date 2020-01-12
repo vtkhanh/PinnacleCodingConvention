@@ -73,6 +73,7 @@ namespace PinnacleCodingConvention.Helpers
                 KindCodeItem.Constants,
                 KindCodeItem.Field,
                 KindCodeItem.Constructor,
+                KindCodeItem.Destructor,
                 KindCodeItem.Method,
                 KindCodeItem.TestMethod,
                 KindCodeItem.Property
