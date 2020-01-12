@@ -88,6 +88,15 @@ namespace PinnacleCodingConvention.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Destructor.
+        /// </summary>
+        internal static string DestructorRegion {
+            get {
+                return ResourceManager.GetString("DestructorRegion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error.
         /// </summary>
         internal static string Error {
