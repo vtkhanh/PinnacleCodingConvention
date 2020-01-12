@@ -12,7 +12,7 @@ pool:
 variables:
   # patch will be incremented at each build. This is useful to create a unique build version.
   patch: $[counter(variables['Build.Reason'], 0)]
-  version: 1.1.$[variables['patch']]
+  version: 1.1.$(variables['patch'])
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
