@@ -61,7 +61,7 @@ namespace PinnacleCodingConvention.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Class Variable(s)....
+        ///   Looks up a localized string similar to Class Variables....
         /// </summary>
         internal static string ClassVariablesRegion {
             get {
