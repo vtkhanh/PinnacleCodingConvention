@@ -14,6 +14,6 @@ It helps developers to avoid some tedious NW in code review, e.g. A-Z order, mis
         public const string Language = "en-US";
         public const string Version = "1.1";
         public const string Author = "KhanhVu";
-        public const string Tags = "";
+        public const string Tags = "Coding Standard, Cleanup, PinnacleDMS, Tools";
     }
 }
