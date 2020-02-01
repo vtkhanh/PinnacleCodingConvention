@@ -45,42 +45,6 @@ namespace PinnacleCodingConvention.Helpers
         }
 
         /// <summary>
-        /// Gets an enumerable set of the selected UI hierarchy items.
-        /// </summary>
-        /// <param name="package">The hosting package.</param>
-        /// <returns>The enumerable set of selected UI hierarchy items.</returns>
-        internal static IEnumerable<UIHierarchyItem> GetSelectedUIHierarchyItems(PinnacleCodingConventionPackage package)
-        {
-            var solutionExplorer = GetSolutionExplorer(package);
-
-            return ((object[])solutionExplorer.SelectedItems).Cast<UIHierarchyItem>().ToList();
-        }
-
-        /// <summary>
-        /// Gets the solution explorer for the specified hosting package.
-        /// </summary>
-        /// <param name="package">The hosting package.</param>
-        /// <returns>The solution explorer.</returns>
-        internal static UIHierarchy GetSolutionExplorer(PinnacleCodingConventionPackage package)
-        {
-            return package.IDE.ToolWindows.SolutionExplorer;
-        }
-
-        /// <summary>
-        /// Gets the top level (solution) UI hierarchy item.
-        /// </summary>
-        /// <param name="package">The hosting package.</param>
-        /// <returns>The top level (solution) UI hierarchy item, otherwise null.</returns>
-        internal static UIHierarchyItem GetTopUIHierarchyItem(PinnacleCodingConventionPackage package)
-        {
-            var solutionExplorer = GetSolutionExplorer(package);
-
-            return solutionExplorer.UIHierarchyItems.Count > 0
-                ? solutionExplorer.UIHierarchyItems.Item(1)
-                : null;
-        }
-
-        /// <summary>
         /// Determines whether the specified item has any expanded children.
         /// </summary>
         /// <param name="parentItem">The parent item.</param>

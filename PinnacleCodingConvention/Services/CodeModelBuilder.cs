@@ -1,4 +1,5 @@
 ﻿using EnvDTE;
+using EnvDTE80;
 using PinnacleCodingConvention.Helpers;
 using PinnacleCodingConvention.Models.CodeItems;
 using System.Collections.Generic;
@@ -8,31 +9,23 @@ namespace PinnacleCodingConvention.Services
 {
     internal class CodeModelBuilder
     {
-        private readonly PinnacleCodingConventionPackage _package;
+        private readonly DTE2 _ide;
         private readonly CodeModelService _codeModelService;
 
-        /// <summary>
-        /// The singleton instance of the <see cref="CodeModelBuilder" /> class.
-        /// </summary>
         private static CodeModelBuilder _instance;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CodeModelBuilder" /> class.
-        /// </summary>
-        /// <param name="package">The hosting package.</param>
-        private CodeModelBuilder(PinnacleCodingConventionPackage package)
+        private CodeModelBuilder(DTE2 ide)
         {
-            _package = package;
-
+            _ide = ide;
             _codeModelService = CodeModelService.GetInstance();
         }
 
         /// <summary>
         /// Gets an instance of the <see cref="CodeModelBuilder" /> class.
         /// </summary>
-        /// <param name="package">The hosting package.</param>
+        /// <param name="ide">The hosting package.</param>
         /// <returns>An instance of the <see cref="CodeModelBuilder" /> class.</returns>
-        internal static CodeModelBuilder GetInstance(PinnacleCodingConventionPackage package) => _instance ?? (_instance = new CodeModelBuilder(package));
+        internal static CodeModelBuilder GetInstance(DTE2 ide) => _instance ?? (_instance = new CodeModelBuilder(ide));
 
         /// <summary>
         /// Walks the given document and constructs a <see cref="IList<BaseCodeItem>" /> of CodeItems
@@ -77,7 +70,7 @@ namespace PinnacleCodingConvention.Services
             if (containingProject != null && containingProject.Kind != null &&
                 containingProject.Kind.ToLowerInvariant() == sharedProjectTypeGUID)
             {
-                var similarProjectItems = SolutionHelper.GetSimilarProjectItems(_package, projectItem);
+                var similarProjectItems = SolutionHelper.GetSimilarProjectItems(_ide, projectItem);
                 var fileCodeModel = similarProjectItems.FirstOrDefault(x => x.FileCodeModel is object)?.FileCodeModel;
 
                 return fileCodeModel;

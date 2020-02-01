@@ -1,4 +1,5 @@
 ﻿using EnvDTE;
+using EnvDTE80;
 using PinnacleCodingConvention.Helpers;
 using PinnacleCodingConvention.Models.CodeItems;
 using System;
@@ -13,14 +14,16 @@ namespace PinnacleCodingConvention.Services
 
         private static CodeItemRetriever _instance;
 
-        private CodeItemRetriever(PinnacleCodingConventionPackage package)
-        {
-            _codeModelBuilder = CodeModelBuilder.GetInstance(package);
-        }
+        private CodeItemRetriever(DTE2 ide) => _codeModelBuilder = CodeModelBuilder.GetInstance(ide);
 
-        internal static CodeItemRetriever GetInstance(PinnacleCodingConventionPackage package) =>
-            _instance ?? (_instance = new CodeItemRetriever(package));
+        internal static CodeItemRetriever GetInstance(DTE2 ide) => _instance ?? (_instance = new CodeItemRetriever(ide));
 
+        /// <summary>
+        /// Parse the document to get list of BaseCodeItem
+        /// </summary>
+        /// <param name="document"></param>
+        /// <param name="loadLazyInitializedValues"></param>
+        /// <returns></returns>
         internal IList<BaseCodeItem> Retrieve(Document document, bool loadLazyInitializedValues = false)
         {
             if (document == null)

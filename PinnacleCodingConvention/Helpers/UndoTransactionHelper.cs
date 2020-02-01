@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualStudio.Shell;
+﻿using EnvDTE80;
 using PinnacleCodingConvention.Common;
 using System;
 
@@ -6,17 +6,12 @@ namespace PinnacleCodingConvention.Helpers
 {
     internal sealed class UndoTransactionHelper
     {
-        private readonly PinnacleCodingConventionPackage _package;
+        private readonly DTE2 _ide;
         private readonly string _transactionName;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="UndoTransactionHelper" /> class.
-        /// </summary>
-        /// <param name="package">The hosting package.</param>
-        /// <param name="transactionName">The name of the transaction.</param>
-        internal UndoTransactionHelper(PinnacleCodingConventionPackage package, string transactionName)
+        internal UndoTransactionHelper(DTE2 ide, string transactionName)
         {
-            _package = package;
+            _ide = ide;
             _transactionName = transactionName;
         }
 
@@ -31,9 +26,9 @@ namespace PinnacleCodingConvention.Helpers
             bool shouldCloseUndoContext = false;
 
             // Start an undo transaction (unless inside one already or within an auto save context).
-            if (!_package.IDE.UndoContext.IsOpen)
+            if (!_ide.UndoContext.IsOpen)
             {
-                _package.IDE.UndoContext.Open(_transactionName);
+                _ide.UndoContext.Open(_transactionName);
                 shouldCloseUndoContext = true;
             }
 
@@ -45,13 +40,13 @@ namespace PinnacleCodingConvention.Helpers
             {
                 var message = $"{_transactionName} {Resource.Stopped}!";
                 OutputWindowHelper.WriteError($"{message} {exception}");
-                _package.IDE.StatusBar.Text = $"{message} {Resource.SeeOutputForMoreInformation}";
+                _ide.StatusBar.Text = $"{message} {Resource.SeeOutputForMoreInformation}";
 
                 catchAction?.Invoke(exception);
 
                 if (shouldCloseUndoContext)
                 {
-                    _package.IDE.UndoContext.SetAborted();
+                    _ide.UndoContext.SetAborted();
                     shouldCloseUndoContext = false;
                 }
             }
@@ -60,7 +55,7 @@ namespace PinnacleCodingConvention.Helpers
                 // Always close the undo transaction to prevent ongoing interference with the IDE.
                 if (shouldCloseUndoContext)
                 {
-                    _package.IDE.UndoContext.Close();
+                    _ide.UndoContext.Close();
                 }
             }
         }
