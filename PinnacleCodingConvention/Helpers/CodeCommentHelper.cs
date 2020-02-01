@@ -81,24 +81,6 @@ namespace PinnacleCodingConvention.Helpers
             return new Regex(pattern, RegexOptions.ExplicitCapture | RegexOptions.Multiline);
         }
 
-        /// <summary>
-        /// Gets the list of tokens defined in Tools &gt; Options &gt; Environment &gt; Task List.
-        /// </summary>
-        /// <param name="package"></param>
-        /// <returns></returns>
-        public static IEnumerable<string> GetTaskListTokens(PinnacleCodingConventionPackage package)
-        {
-            var settings = package.IDE.Properties["Environment", "TaskList"];
-            var tokens = settings.Item("CommentTokens").Value as string[];
-
-            if (tokens == null || tokens.Length < 1)
-                return Enumerable.Empty<string>();
-
-            // Tokens values are written like "NAME:PRIORITY". We want only the names, and require
-            // that they are followed by a semicolon and a space.
-            return tokens.Select(t => t.Substring(0, t.LastIndexOf(':') + 1) + " ");
-        }
-
         internal static bool IsCommentLine(EditPoint point) => LineMatchesRegex(point, GetCommentRegex(point.GetCodeLanguage())).Success;
 
         internal static Match LineMatchesRegex(EditPoint point, Regex regex)

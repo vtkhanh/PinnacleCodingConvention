@@ -1,4 +1,5 @@
 ﻿using EnvDTE;
+using EnvDTE80;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,32 +60,14 @@ namespace PinnacleCodingConvention.Helpers
         }
 
         /// <summary>
-        /// Gets an enumerable set of the selected project items.
-        /// </summary>
-        /// <param name="package">The hosting package.</param>
-        /// <returns>The enumerable set of selected project items.</returns>
-        internal static IEnumerable<ProjectItem> GetSelectedProjectItemsRecursively(PinnacleCodingConventionPackage package)
-        {
-            var selectedProjectItems = new List<ProjectItem>();
-            var selectedUIHierarchyItems = UIHierarchyHelper.GetSelectedUIHierarchyItems(package);
-
-            foreach (var item in selectedUIHierarchyItems.Select(uiHierarchyItem => uiHierarchyItem.Object))
-            {
-                selectedProjectItems.AddRange(GetItemsRecursively<ProjectItem>(item));
-            }
-
-            return selectedProjectItems;
-        }
-
-        /// <summary>
         /// Gets an enumerable set of similar project items compared by file name, useful for shared projects.
         /// </summary>
         /// <param name="package">The hosting package.</param>
         /// <param name="projectItem">The project item to match.</param>
         /// <returns>The enumerable set of similar project items.</returns>
-        internal static IEnumerable<ProjectItem> GetSimilarProjectItems(PinnacleCodingConventionPackage package, ProjectItem projectItem)
+        internal static IEnumerable<ProjectItem> GetSimilarProjectItems(DTE2 ide, ProjectItem projectItem)
         {
-            var allItems = GetAllItemsInSolution<ProjectItem>(package.IDE.Solution);
+            var allItems = GetAllItemsInSolution<ProjectItem>(ide.Solution);
 
             return allItems.Where(x => x.Name == projectItem.Name && x.Kind == projectItem.Kind && x.Document.FullName == projectItem.Document.FullName);
         }

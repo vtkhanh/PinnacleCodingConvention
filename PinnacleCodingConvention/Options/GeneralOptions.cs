@@ -14,5 +14,11 @@ namespace PinnacleCodingConvention.Options
         [Description("Order the class variables by Access Level then Name")]
         [DefaultValue(true)]
         public bool OrderByAccessLevelFirst { get; set; }
+
+        [DisplayName("Profile")]
+        [Description("Specifies whether to run Code Clean up automatically on save or not.")]
+        [DefaultValue(CodeCleanupProfile.Profile1)]
+        [TypeConverter(typeof(EnumConverter))]
+        public CodeCleanupProfile Profile { get; set; } = CodeCleanupProfile.Profile1;
     }
 }

@@ -45,7 +45,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="CleanUpCommand.cs" />
+    <Compile Include="Commands\CleanUpCommandHandler.cs" />
+    <Compile Include="Commands\CleanUpCommandArgs.cs" />
+    <Compile Include="Commands\CodeCleanUpProfileCommandHandler.cs" />
     <Compile Include="Helpers\CodeCommentHelper.cs" />
     <Compile Include="Helpers\CodeElementHelper.cs" />
     <Compile Include="Helpers\CodeItemNameComparer.cs" />
@@ -91,6 +93,7 @@
     <Compile Include="Options\BaseOptionPage.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Options\CodeCleanupProfile.cs" />
     <Compile Include="Options\DialogPageProvider.cs" />
     <Compile Include="Options\GeneralOptions.cs" />
     <Compile Include="PinnacleCodingConvention.cs">
@@ -113,11 +116,18 @@
     <Compile Include="Services\CodeRegionService.cs" />
     <Compile Include="Services\CodeTreeBuilder.cs" />
     <Compile Include="Services\BlankLineInsertService.cs" />
+    <Compile Include="source.extension.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>source.extension.vsixmanifest</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
+      <Generator>VsixManifestGenerator</Generator>
+      <LastGenOutput>source.extension.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -125,6 +135,7 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data" />
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />

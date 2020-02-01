@@ -1,4 +1,5 @@
 ﻿using EnvDTE;
+using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
 using PinnacleCodingConvention.Helpers;
 using PinnacleCodingConvention.Models.CodeItems;
@@ -8,7 +9,7 @@ namespace PinnacleCodingConvention.Services
 {
     internal sealed class CleanUpManager
     {
-        private readonly PinnacleCodingConventionPackage _package;
+        private readonly DTE2 _ide;
         private readonly CodeItemRetriever _codeItemRetriever;
         private readonly CodeItemReorganizer _codeItemReorganizer;
         private readonly CodeTreeBuilder _codeTreeBuilder;
@@ -17,24 +18,28 @@ namespace PinnacleCodingConvention.Services
 
         private static CleanUpManager _instance;
 
-        private CleanUpManager(PinnacleCodingConventionPackage package)
+        private CleanUpManager(DTE2 ide)
         {
-            _package = package;
+            _ide = ide;
 
-            _codeItemRetriever = CodeItemRetriever.GetInstance(package);
+            _codeItemRetriever = CodeItemRetriever.GetInstance(ide);
             _codeItemReorganizer = CodeItemReorganizer.GetInstance();
             _codeTreeBuilder = CodeTreeBuilder.GetInstance();
             _codeRegionService = CodeRegionService.GetInstance();
             _blankLineInsertService = BlankLineInsertService.GetInstance();
         }
 
-        internal static CleanUpManager GetInstance(PinnacleCodingConventionPackage package) => _instance ?? (_instance = new CleanUpManager(package));
+        internal static CleanUpManager GetInstance(DTE2 ide) => _instance ?? (_instance = new CleanUpManager(ide));
 
+        /// <summary>
+        /// Execute the Pinnacle Cleanup logic
+        /// </summary>
+        /// <param name="document">The active document which is being worked on</param>
         internal void Execute(Document document)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            new UndoTransactionHelper(_package, document.Name).Run(() =>
+            new UndoTransactionHelper(_ide, document.Name).Run(() =>
             {
                 var codeItems = _codeItemRetriever.Retrieve(document).Where(item => !(item is CodeItemUsingStatement));
                 codeItems = _codeRegionService.CleanupExistingRegions(codeItems);

@@ -1,11 +1,7 @@
-﻿using System;
-using System.Runtime.InteropServices;
-using System.Threading;
-using EnvDTE;
-using EnvDTE80;
-using Microsoft.VisualStudio.Shell;
+﻿using Microsoft.VisualStudio.Shell;
 using PinnacleCodingConvention.Options;
-using Task = System.Threading.Tasks.Task;
+using System;
+using System.Runtime.InteropServices;
 
 namespace PinnacleCodingConvention
 {
@@ -27,58 +23,11 @@ namespace PinnacleCodingConvention
     /// </para>
     /// </remarks>
     [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
-    [Guid(PackageGuids.PinnacleCodingConventionPackageString)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [ProvideOptionPage(typeof(DialogPageProvider.General), "Pinnacle Coding Convention", "General", 0, 0, true)]
+    [Guid(PackageGuids.PinnacleCodingConventionPackageString)]
+    [ProvideBindingPath]
     public sealed class PinnacleCodingConventionPackage : AsyncPackage
     {
-
-        /// <summary>
-        /// The top level application instance of the VS IDE that is executing this package.
-        /// </summary>
-        private DTE2 _ide;
-
-        /// <summary>
-        /// Gets the top level application instance of the VS IDE that is executing this package.
-        /// </summary>
-        public DTE2 IDE => _ide ?? (_ide = (DTE2)GetService(typeof(DTE)));
-
-        /// <summary>
-        /// Gets the currently active document, otherwise null.
-        /// </summary>
-        public Document ActiveDocument
-        {
-            get
-            {
-                try
-                {
-                    return IDE.ActiveDocument;
-                }
-                catch (Exception)
-                {
-                    // If a project property page is active, accessing the ActiveDocument causes an exception.
-                    return null;
-                }
-            }
-        }
-
-        #region Package Members
-
-        /// <summary>
-        /// Initialization of the package; this method is called right after the package is sited, so this is the place
-        /// where you can put all the initialization code that rely on services provided by VisualStudio.
-        /// </summary>
-        /// <param name="cancellationToken">A cancellation token to monitor for initialization cancellation, which can occur when VS is shutting down.</param>
-        /// <param name="progress">A provider for progress updates.</param>
-        /// <returns>A task representing the async work of package initialization, or an already completed task if there is none. Do not return null from this method.</returns>
-        protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
-        {
-            // When initialized asynchronously, the current thread may be a background thread at this point.
-            // Do any initialization that requires the UI thread after switching to the UI thread.
-            await this.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
-            await CleanUpCommand.InitializeAsync(this);
-        }
-
-        #endregion
     }
 }
