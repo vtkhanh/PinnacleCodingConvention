@@ -15,6 +15,7 @@ namespace PinnacleCodingConvention.Commands
     [Name(nameof(CleanUpCommandHandler))]
     [ContentType("code")]
     [TextViewRole(PredefinedTextViewRoles.PrimaryDocument)]
+    [Order(Before = "CodeCleanUpProfileCommandHandler")]
     internal class CleanUpCommandHandler : ICommandHandler<CleanUpCommandArgs>
     {
         public string DisplayName => nameof(CleanUpCommandHandler);
