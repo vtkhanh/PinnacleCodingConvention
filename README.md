@@ -10,7 +10,7 @@ It helps developers to avoid some tedious NW in code review, e.g. A-Z order, mis
 ## Release 
 
 ### 1.1.5
-Change to not get Clipboard involed when formatting in an atempt to fixe the exception: 
+Change to not get Clipboard involved when formatting in an attempt to fix the exception: 
 `System.Runtime.InteropServices.COMException (0x800401D0): OpenClipboard Failed (Exception from HRESULT: 0x800401D0 (CLIPBRD_E_CANT_OPEN))`
 ### 1.1.2
 Add ability to Run Code Cleanup (Profile) feature from Visual Studio 2019. Be able to config which Profile to execute through option: Tools > Options > Pinnacle Coding Convention > General > Profile
