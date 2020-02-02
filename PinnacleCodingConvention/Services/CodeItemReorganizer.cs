@@ -67,8 +67,8 @@ namespace PinnacleCodingConvention.Services
             }
 
             bool separateWithNewLine = ShouldBeSeparatedByNewLine(itemToMove, baseItem);
-            CutItemToMove(itemToMove, out int cursorOffset);
-            PasteAboveBaseItem(baseItem, separateWithNewLine, cursorOffset);
+            string cutText = CutItemToMove(itemToMove, out int cursorOffset);
+            PasteAboveBaseItem(baseItem, cutText, separateWithNewLine, cursorOffset);
         }
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace PinnacleCodingConvention.Services
         /// <param name="cursorOffset">
         /// The cursor's offset within the item being removed, otherwise -1.
         /// </param>
-        private static void CutItemToMove(BaseCodeItem itemToRemove, out int cursorOffset)
+        private static string CutItemToMove(BaseCodeItem itemToRemove, out int cursorOffset)
         {
             var removeStartPoint = itemToRemove.StartPoint;
             var removeEndPoint = itemToRemove.EndPoint;
@@ -107,8 +107,11 @@ namespace PinnacleCodingConvention.Services
             }
 
             // Capture the text and cleanup whitespace.
-            removeStartPoint.Cut(removeEndPoint);
+            var cutText = removeStartPoint.GetText(removeEndPoint);
+            removeStartPoint.Delete(removeEndPoint);
             removeStartPoint.DeleteWhitespace(vsWhitespaceOptions.vsWhitespaceOptionsVertical);
+
+            return cutText;
         }
 
         /// <summary>
@@ -117,12 +120,13 @@ namespace PinnacleCodingConvention.Services
         /// <param name="baseItem"></param>
         /// <param name="separateWithNewLine"></param>
         /// <param name="cursorOffset"></param>
-        private static void PasteAboveBaseItem(BaseCodeItem baseItem, bool separateWithNewLine, int cursorOffset)
+        private static void PasteAboveBaseItem(BaseCodeItem baseItem, string text, bool separateWithNewLine, int cursorOffset)
         {
             var baseStartPoint = baseItem.StartPoint;
             var pastePoint = baseStartPoint.CreateEditPoint();
 
-            pastePoint.Paste();
+            // Paste the text above base item
+            pastePoint.Insert(text);
             pastePoint.Insert(Environment.NewLine);
             if (separateWithNewLine)
             {
