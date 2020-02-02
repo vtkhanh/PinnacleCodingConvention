@@ -14,6 +14,14 @@
     {
       "pathOnDisk": "..\\PinnacleCodingConvention\\Resources\\Preview.png",
       "targetPath": "Resources/Preview.png"
+    },
+    {
+      "pathOnDisk": "..\\Images\\Demo.gif",
+      "targetPath": "Images/Demo.gif"
+    },
+    {
+      "pathOnDisk": "..\\Images\\Configure_Code_Cleanup.png",
+      "targetPath": "Images/Configure_Code_Cleanup.png"
     }
   ],
   "overview": "../README.md",
