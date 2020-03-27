@@ -73,10 +73,10 @@ namespace PinnacleCodingConvention.Helpers
                 KindCodeItem.Constants,
                 KindCodeItem.Field,
                 KindCodeItem.Constructor,
-                KindCodeItem.Destructor,
                 KindCodeItem.Method,
                 KindCodeItem.TestMethod,
-                KindCodeItem.Property
+                KindCodeItem.Property,
+                KindCodeItem.Destructor,
             };
             return itemsOrder.IndexOf(codeItem.Kind) + 1;
         }
