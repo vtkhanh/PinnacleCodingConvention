@@ -113,6 +113,9 @@ namespace PinnacleCodingConvention.Helpers
                     return name.Substring(dotPosition);
             }
 
+            if (GeneralOptions.Instance.PageLoadFirst && name.EndsWith("Page_Load"))
+                return $"__{name}";
+
             return name;
         }
     }
