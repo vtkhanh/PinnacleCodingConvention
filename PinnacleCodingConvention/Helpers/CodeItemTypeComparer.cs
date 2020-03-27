@@ -73,10 +73,10 @@ namespace PinnacleCodingConvention.Helpers
                 KindCodeItem.Constants,
                 KindCodeItem.Field,
                 KindCodeItem.Constructor,
-                KindCodeItem.Destructor,
                 KindCodeItem.Method,
                 KindCodeItem.TestMethod,
-                KindCodeItem.Property
+                KindCodeItem.Property,
+                KindCodeItem.Destructor,
             };
             return itemsOrder.IndexOf(codeItem.Kind) + 1;
         }
@@ -112,6 +112,9 @@ namespace PinnacleCodingConvention.Helpers
                 if (0 < dotPosition && dotPosition < name.Length)
                     return name.Substring(dotPosition);
             }
+
+            if (GeneralOptions.Instance.PageLoadFirst && name.EndsWith("Page_Load"))
+                return $"__{name}";
 
             return name;
         }
