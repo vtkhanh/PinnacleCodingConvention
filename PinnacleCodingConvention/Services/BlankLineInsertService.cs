@@ -1,6 +1,8 @@
 ﻿using PinnacleCodingConvention.Helpers;
 using PinnacleCodingConvention.Models.CodeItems;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PinnacleCodingConvention.Services
 {
@@ -29,6 +31,55 @@ namespace PinnacleCodingConvention.Services
         /// </summary>
         /// <param name="package">The hosting package.</param>
         private BlankLineInsertService() { }
+
+        /// <summary>
+        /// Insert blank lines to code items
+        /// </summary>
+        /// <param name="codeItems"></param>
+        internal void InsertPaddings(IEnumerable<BaseCodeItem> codeItems)
+        {
+            foreach (var codeItem in codeItems)
+            {
+                if (codeItem is ICodeItemParent itemAsParent)
+                {
+                    if (itemAsParent.Kind == KindCodeItem.Class)
+                    {
+                        InsertPaddingsToItemsInClass(itemAsParent.Children);
+                    }
+                    else if (itemAsParent.Kind == KindCodeItem.Interface)
+                    {
+                        InsertPaddingsToItemsInInterface(itemAsParent.Children);
+                    }
+                    else
+                    {
+                        InsertPaddings(itemAsParent.Children);
+                    }
+                }
+            }
+        }
+
+        private void InsertPaddingsToItemsInClass(IEnumerable<BaseCodeItem> codeItems)
+        {
+            // Separate constant section
+            var lastConstantItem = codeItems.OrderBy(item => item.StartPoint.Line).LastOrDefault(item => item.Kind == KindCodeItem.Constants);
+            if (lastConstantItem is object)
+            {
+                InsertPaddingAfterCodeElements(new[] { lastConstantItem });
+            }
+
+            var itemsToAddPaddings = codeItems.Where(item => item is CodeItemMethod || (item is CodeItemProperty && item.StartLine != item.EndLine));
+            InsertPaddingBeforeAndAfter(itemsToAddPaddings);
+        }
+
+        private void InsertPaddingsToItemsInInterface(IEnumerable<BaseCodeItem> codeItems)
+        {
+            // Separate methods and properties
+            var lastMethodItem = codeItems.OrderBy(item => item.StartPoint.Line).LastOrDefault(item => item is CodeItemMethod);
+            if (lastMethodItem is object)
+            {
+                InsertPaddingAfterCodeElements(new[] { lastMethodItem });
+            }
+        }
 
         /// <summary>
         /// Determines if the specified code item instance should be preceded by a blank line.

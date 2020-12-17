@@ -9,6 +9,15 @@ It helps developers to avoid some tedious NW in code review, e.g. A-Z order, mis
 
 ## Release 
 
+### 1.1.8
+- Do not add regions, and remove existing regions.
+- Group by sections:
+    - Constants
+    - Fields
+    - Constructors
+    - Methods
+    - Properties
+
 ### 1.1.5
 Change to not get Clipboard involved when formatting in an attempt to fix the exception: 
 `System.Runtime.InteropServices.COMException (0x800401D0): OpenClipboard Failed (Exception from HRESULT: 0x800401D0 (CLIPBRD_E_CANT_OPEN))`

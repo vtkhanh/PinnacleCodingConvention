@@ -17,11 +17,11 @@ namespace PinnacleCodingConvention.Services
 
         internal static CodeItemReorganizer GetInstance() => _instance ?? (_instance = new CodeItemReorganizer());
 
-        internal IEnumerable<BaseCodeItem> Reorganize(IEnumerable<BaseCodeItem> codeItems)
+        internal void Reorganize(IEnumerable<BaseCodeItem> codeItems)
         {
             if (!codeItems.Any())
             {
-                return codeItems;
+                return;
             }
             
             // Get the items in their current order and their desired order.
@@ -50,8 +50,6 @@ namespace PinnacleCodingConvention.Services
                     currentOrder.Insert(desiredIndex > currentIndex ? desiredIndex - 1 : desiredIndex, item);
                 }
             }
-
-            return codeItems;
         }
 
         /// <summary>

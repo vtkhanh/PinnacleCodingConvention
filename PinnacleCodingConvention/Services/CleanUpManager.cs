@@ -44,12 +44,8 @@ namespace PinnacleCodingConvention.Services
                 var codeItems = _codeItemRetriever.Retrieve(document).Where(item => !(item is CodeItemUsingStatement));
                 codeItems = _codeRegionService.CleanupExistingRegions(codeItems);
                 codeItems = _codeTreeBuilder.Build(codeItems);
-                codeItems = _codeItemReorganizer.Reorganize(codeItems);
-
-                var codeItemNamespace = codeItems.First(item => item is CodeItemNamespace) as ICodeItemParent;
-                _codeRegionService.AddRequiredRegions(codeItemNamespace.Children, codeItemNamespace);
-                codeItems = _codeItemRetriever.Retrieve(document);
-                _blankLineInsertService.InsertPaddingBeforeAndAfter(codeItems.Where(item => item is CodeItemRegion || item is CodeItemNamespace));
+                _codeItemReorganizer.Reorganize(codeItems);
+                _blankLineInsertService.InsertPaddings(codeItems);
 
 #if DEBUG
                 OutputWindowHelper.PrintCodeItems(codeItems);
