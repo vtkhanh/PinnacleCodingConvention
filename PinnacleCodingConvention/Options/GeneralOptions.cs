@@ -15,6 +15,11 @@ namespace PinnacleCodingConvention.Options
         [DefaultValue(true)]
         public bool OrderByAccessLevelFirst { get; set; }
 
+        [DisplayName("Keep Page_Load on top")]
+        [Description("Always keep Page_Load and Pinnacle_Page_Load on top of Methods region")]
+        [DefaultValue(false)]
+        public bool PageLoadFirst { get; set; }
+
         [DisplayName("Profile")]
         [Description("Specifies whether to run Code Clean up automatically on save or not.")]
         [DefaultValue(CodeCleanupProfile.Profile1)]
