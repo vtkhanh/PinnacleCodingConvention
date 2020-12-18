@@ -9,6 +9,12 @@ It helps developers to avoid some tedious NW in code review, e.g. A-Z order, mis
 
 ## Release 
 
+### 1.1.9
+- Remove unnecessary options to get conventions unified:
+    - Do not treat "Page_Load" as a special one (always sort by alphabetical order)
+    - Do separate class consts and others
+    - Do put "readonly" fields before others
+
 ### 1.1.8
 - Do not add regions, and remove existing regions.
 - Group by sections:

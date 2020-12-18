@@ -92,11 +92,7 @@ namespace PinnacleCodingConvention.Helpers
 
         private static int CalculateReadOnlyOffset(BaseCodeItem codeItem)
         {
-            var codeItemField = codeItem as CodeItemField;
-            if (codeItemField == null || !GeneralOptions.Instance.OrderByAccessLevelFirst)
-                return 0;
-
-            return codeItemField.IsReadOnly ? 0 : 1;
+            return codeItem is CodeItemField codeItemField && codeItemField.IsReadOnly ? 0 : 1;
         }
 
         private static string NormalizeName(BaseCodeItem codeItem)
@@ -112,9 +108,6 @@ namespace PinnacleCodingConvention.Helpers
                 if (0 < dotPosition && dotPosition < name.Length)
                     return name.Substring(dotPosition);
             }
-
-            if (GeneralOptions.Instance.PageLoadFirst && name.EndsWith("Page_Load"))
-                return $"__{name}";
 
             return name;
         }

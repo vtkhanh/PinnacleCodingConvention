@@ -1,5 +1,4 @@
 ﻿using Microsoft.VisualStudio.Commanding;
-using Microsoft.VisualStudio.Editor.Commanding;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor.Commanding;
 using Microsoft.VisualStudio.Text.Editor.Commanding.Commands;
@@ -46,7 +45,7 @@ namespace PinnacleCodingConvention.Commands
                 OutputWindowHelper.WriteError(ex.Message);
             }
 
-            return true;
+            return false;
         }
 
         public CommandState GetCommandState(CleanUpCommandArgs args) => CommandState.Available;

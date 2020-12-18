@@ -4,24 +4,8 @@ namespace PinnacleCodingConvention.Options
 {
     internal class GeneralOptions : BaseOptionModel<GeneralOptions>
     {
-        [DisplayName("Separate Constants and Variables")]
-        [Description("Separate class constants and class variables into different regions")]
-        [DefaultValue(false)]
-        public bool IsSeparateConstAndVar { get; set; }
-
-
-        [DisplayName("Order By Access Level first")]
-        [Description("Order the class variables by Access Level then Name")]
-        [DefaultValue(true)]
-        public bool OrderByAccessLevelFirst { get; set; }
-
-        [DisplayName("Keep Page_Load on top")]
-        [Description("Always keep Page_Load and Pinnacle_Page_Load on top of Methods region")]
-        [DefaultValue(false)]
-        public bool PageLoadFirst { get; set; }
-
-        [DisplayName("Profile")]
-        [Description("Specifies whether to run Code Clean up automatically on save or not.")]
+        [DisplayName("Code Cleanup Profile")]
+        [Description("Specify Code Cleanup Profile to be run automatically.")]
         [DefaultValue(CodeCleanupProfile.Profile1)]
         [TypeConverter(typeof(EnumConverter))]
         public CodeCleanupProfile Profile { get; set; } = CodeCleanupProfile.Profile1;

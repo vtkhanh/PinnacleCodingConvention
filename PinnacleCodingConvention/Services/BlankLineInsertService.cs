@@ -38,6 +38,7 @@ namespace PinnacleCodingConvention.Services
         /// <param name="codeItems"></param>
         internal void InsertPaddings(IEnumerable<BaseCodeItem> codeItems)
         {
+            var itemsToAddPaddings = new List<BaseCodeItem>();
             foreach (var codeItem in codeItems)
             {
                 if (codeItem is ICodeItemParent itemAsParent)
@@ -54,8 +55,10 @@ namespace PinnacleCodingConvention.Services
                     {
                         InsertPaddings(itemAsParent.Children);
                     }
+                    itemsToAddPaddings.Add(codeItem);
                 }
             }
+            InsertPaddingBeforeAndAfter(itemsToAddPaddings);
         }
 
         private void InsertPaddingsToItemsInClass(IEnumerable<BaseCodeItem> codeItems)
@@ -67,7 +70,7 @@ namespace PinnacleCodingConvention.Services
                 InsertPaddingAfterCodeElements(new[] { lastConstantItem });
             }
 
-            var itemsToAddPaddings = codeItems.Where(item => item is CodeItemMethod || (item is CodeItemProperty && item.StartLine != item.EndLine));
+            var itemsToAddPaddings = codeItems.Where(item => item is CodeItemMethod || (item is CodeItemProperty && item.IsMultiLine));
             InsertPaddingBeforeAndAfter(itemsToAddPaddings);
         }
 

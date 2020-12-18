@@ -6,7 +6,6 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
 using PinnacleCodingConvention.Services;
-using System;
 using System.ComponentModel.Composition;
 
 namespace PinnacleCodingConvention.Commands
@@ -15,7 +14,7 @@ namespace PinnacleCodingConvention.Commands
     [Name(nameof(CleanUpCommandHandler))]
     [ContentType("code")]
     [TextViewRole(PredefinedTextViewRoles.PrimaryDocument)]
-    [Order(Before = "CodeCleanUpProfileCommandHandler")]
+    [Order(After = "CodeCleanUpProfileCommandHandler")]
     internal class CleanUpCommandHandler : ICommandHandler<CleanUpCommandArgs>
     {
         public string DisplayName => nameof(CleanUpCommandHandler);
@@ -34,7 +33,7 @@ namespace PinnacleCodingConvention.Commands
             var commandManager = CleanUpManager.GetInstance(ide);
             commandManager.Execute(ide.ActiveDocument);
 
-            return false;
+            return true;
         }
 
         public CommandState GetCommandState(CleanUpCommandArgs args) => CommandState.Available;
